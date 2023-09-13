@@ -64,6 +64,16 @@ function _update()
  _handleinputs()
  _handlerots()
  _handlerotends()
+ _handlecharmovement()
+end
+
+function _handlecharmovement()
+ for i=1,
+  count(characters_to_draw) do
+  characters_to_draw[i]=
+   move_character(
+    characters_to_draw[i])
+ end
 end
 
 function _handleinputs()
@@ -236,7 +246,6 @@ function add_to_points(
  add(points,point)
 end
 
-
 function create_tile(
  points,center_x,center_y,
  spritestart_x,spritestart_y,
@@ -264,6 +273,7 @@ function create_tile(
  tile.char_type=nil
  tile.parent_tile=nil
  tile.movement_dir=nil
+ tile.char_speed=nil
  return tile
 end
 
@@ -271,7 +281,7 @@ function cast_tile_to_char(
  tile,char_type)
  tile.is_character=true
  tile.char_type=char_type
- tile.movement_dir=0
+ tile.movement_dir="right"
  return tile
 end
 
@@ -395,6 +405,21 @@ function fix_end_rot(tile)
      tpx0+tile.center_y
    end
  end
+ return tile
+end
+
+function translate_tile(tile,
+ x_translate, y_translate)
+ --translate the center
+ tile.center_x+=x_translate
+ tile.center_y+=y_translate
+ 
+ --translate each draw point
+ for i=1,count(tile.draw_points) do
+  tile.draw_points[i].x+=x_translate
+  tile.draw_points[i].y+=y_translate
+ end
+ 
  return tile
 end
 -->8
@@ -700,6 +725,24 @@ function add_char_to_list(
    x_origin,y_origin)
  )
 end
+
+function move_character(char)
+ char_speed=1
+ if char.movement_dir=="right" then
+  return translate_tile(char,char_speed,0)
+ elseif char.movement_dir=="left" then
+  return translate_tile(char,char_speed*-1,0)
+ elseif char.movement_dir=="up" then
+  return translate_tile(
+   char,0,char_speed*-1)
+ elseif char.movement_dir=="down" then
+  return translate_tile(
+   char,0,char_speed)
+ else
+  return char
+ end
+end
+ 
 
 function create_player()
  player_points=
