@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 38
+version 41
 __lua__
 function _init()
   cls()
@@ -54,10 +54,12 @@ function _init_static_tiles()
    )
  end
 
- --[[add_static_tile_to_list(
+ --[[
+ add_static_tile_to_list(
   "corrend_right",
   static_tiles_to_draw,
-  54, 64)]]
+  54, 64)
+ --]]
 end
 
 function _update()
@@ -182,7 +184,8 @@ function _debuglogs()
  a2=rotators_to_draw[2].draw_points[1].x0
  b2=rotators_to_draw[2].draw_points[1].y0
  print(""..a1.." "..b1.."")
- print(""..a2.." "..b2.."")]]
+ print(""..a2.." "..b2.."")
+ --]]
 end
 
 --[[
@@ -218,7 +221,8 @@ function _debug_init_rotators()
  	 drawhoriztile2,drawplustile,
  	 drawplustile2,drawplustile3,
  	 drawplustile4}
-end]]
+end
+--]]
 -->8
 function create_point(x,y,c)
  point={}
