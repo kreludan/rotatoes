@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 41
+version 38
 __lua__
 function _init()
   cls()
@@ -7,9 +7,11 @@ function _init()
   rotators_to_draw={}
   static_tiles_to_draw={}
   characters_to_draw={}
+  waypoints={}
   _init_rotators()
   _init_static_tiles()
   _init_characters()
+  _init_waypoints()
   --_debug_init_rotators()
 end
 
@@ -22,7 +24,13 @@ end
 
 function _init_rotators()
  rotator_blueprint={
-  {"vert",63,63}
+  {"vert",63,63},
+  {"l1", 30,30},
+  {"l2", 50, 30},
+  {"l3", 70, 30},
+  {"l4", 90, 30},
+  {"horiz", 30, 90},
+  {"plus", 50, 90}
  }
  for i=1,count(rotator_blueprint) do
   add_rotator_to_list(
@@ -35,10 +43,10 @@ end
 
 function _init_static_tiles()
  static_tile_blueprint={
-  {"corrend_left",32,63},
-  {"corr_horiz",39,63},
-  {"corr_horiz",46,63},
-  {"corrend_right",53,63},
+  {"corrend_left",30,63},
+  {"corr_horiz",37,63},
+  {"corr_horiz",44,63},
+  {"corrend_right",51,63},
   {"corrend_left",75,63},
   {"corr_horiz",82,63},
   {"corr_horiz",89,63},
@@ -54,12 +62,26 @@ function _init_static_tiles()
    )
  end
 
- --[[
- add_static_tile_to_list(
+ --[[add_static_tile_to_list(
   "corrend_right",
   static_tiles_to_draw,
-  54, 64)
- --]]
+  54, 64)]]
+end
+
+function _init_waypoints()
+ for i=1,count(rotators_to_draw) do
+  for j=1,count(rotators_to_draw[i].draw_waypoints) do
+   add(waypoints,
+    rotators_to_draw[i].draw_waypoints[j])
+  end
+ end
+ 
+ for i=1,count(static_tiles_to_draw) do
+  for j=1,count(static_tiles_to_draw[i].draw_waypoints) do
+   add(waypoints,
+    static_tiles_to_draw[i].draw_waypoints[j])
+  end
+ end 
 end
 
 function _update()
@@ -160,11 +182,19 @@ function _draw()
   draw_tile(characters_to_draw[i], false)
  end
  
+ _debug_drawwaypoints()
  _debuglogs()
 end
 
 function _draw_ui_elements()
  rect(0,0,127,127,7)
+end
+
+function _debug_drawwaypoints()
+ for i=1,count(waypoints) do
+  pset(waypoints[i].x,
+   waypoints[i].y, 12)
+ end
 end
 
 function _debuglogs()
@@ -184,8 +214,7 @@ function _debuglogs()
  a2=rotators_to_draw[2].draw_points[1].x0
  b2=rotators_to_draw[2].draw_points[1].y0
  print(""..a1.." "..b1.."")
- print(""..a2.." "..b2.."")
- --]]
+ print(""..a2.." "..b2.."")]]
 end
 
 --[[
@@ -221,8 +250,7 @@ function _debug_init_rotators()
  	 drawhoriztile2,drawplustile,
  	 drawplustile2,drawplustile3,
  	 drawplustile4}
-end
---]]
+end]]
 -->8
 function create_point(x,y,c)
  point={}
@@ -254,13 +282,20 @@ function create_tile(
  points,center_x,center_y,
  spritestart_x,spritestart_y,
  selectedspritestart_x,
- selectedspritestart_y
+ selectedspritestart_y,
+ waypoints
  )
  local tile={}
  tile.points=points
  tile.draw_points={}
  tile.center_x=center_x
  tile.center_y=center_y
+ if waypoints==nil then
+  tile.waypoints={}
+ else
+  tile.waypoints=waypoints
+ end
+ tile.draw_waypoints={}
  tile.spritestart_x=
   spritestart_x
  tile.spritestart_y=
@@ -295,6 +330,20 @@ function create_drawable_tile(
   --translate the center
  centered_x=x-tile.center_x
  centered_y=y-tile.center_y
+ 
+ --translate the waypoints
+ for i=1,count(tile.waypoints) do
+  add_to_points(
+   tile.draw_waypoints,
+   create_point(
+    tile.waypoints[i].x+
+    centered_x,
+    tile.waypoints[i].y+
+    centered_y,
+    tile.waypoints[i].color
+   )
+  )
+ end
  
  --generate each draw point
  for i=1,count(tile.points) do
@@ -341,7 +390,7 @@ function draw_tile(tile,
    1, 1,
    tile.draw_points[i].x,
    tile.draw_points[i].y)
- end
+ end	
 end
 
 function sp2xy(sp)
@@ -467,49 +516,56 @@ end
 function create_l1_tile()
  l1_points=create_l1_points()
  l1_tile=create_tile(
-  l1_points,3,8,8,0,8,17)
+  l1_points,3,8,8,0,8,17,
+  create_l1_waypoints())
  return l1_tile
 end
 
 function create_l2_tile()
  l2_points=create_l2_points()
  l2_tile=create_tile(
-  l2_points,8,8,20,0,20,17)
+  l2_points,8,8,20,0,20,17,
+  create_l2_waypoints())
  return l2_tile
 end
 
 function create_l3_tile()
  l3_points=create_l3_points()
  l3_tile=create_tile(
-  l3_points,8,3,32,0,32,17)
+  l3_points,8,3,32,0,32,17,
+  create_l3_waypoints())
  return l3_tile
 end
 
 function create_l4_tile()
  l4_points=create_l4_points()
  l4_tile=create_tile(
-  l4_points,3,3,44,0,44,17)
+  l4_points,3,3,44,0,44,17,
+  create_l4_waypoints())
  return l4_tile
 end
 
 function create_vert_tile()
  vert_points=create_vert_points()
  vert_tile=create_tile(
-  vert_points,3,8,56,0,56,17)
+  vert_points,3,8,56,0,56,17,
+  create_vert_waypoints())
  return vert_tile
 end
 
 function create_horiz_tile()
  horiz_points=create_horiz_points()
  horiz_tile=create_tile(
-  horiz_points,8,3,63,0,63,17)
+  horiz_points,8,3,63,0,63,17,
+  create_horiz_waypoints())
  return horiz_tile
 end
 
 function create_plus_tile()
  plus_points=create_plus_points()
  plus_tile=create_tile(
-  plus_points,8,8,80,0,80,17)
+  plus_points,8,8,80,0,80,17,
+  create_plus_waypoints())
  return plus_tile
 end
 
@@ -528,6 +584,14 @@ function create_cross_points()
    create_point(i,2,1))
  end
  return cross_points
+end
+
+function create_plus_waypoints()
+ return {create_point(3,8,1),
+  create_point(8,3,1),
+  create_point(8,8,1),
+  create_point(8,13,1),
+  create_point(13,8,1)}
 end
 
 function create_plus_points()
@@ -564,6 +628,12 @@ function create_horiz_points()
  return horiz_points
 end
 
+function create_horiz_waypoints()
+ return {create_point(3,3,1),
+  create_point(8,3,1),
+  create_point(13,3,1)}
+end
+
 function create_vert_points()
  vert_points={}
  for y=0,16 do
@@ -574,6 +644,18 @@ function create_vert_points()
   end
  end
  return vert_points
+end
+
+function create_vert_waypoints()
+ return {create_point(3,3,1),
+  create_point(3,8,1),
+  create_point(3,13,1)}
+end
+
+function create_l4_waypoints()
+ return {create_point(3,8,1),
+  create_point(3,3,1),
+  create_point(8,3,1)}
 end
 
 function create_l4_points()
@@ -595,6 +677,12 @@ function create_l4_points()
  return l4_points
 end
 
+function create_l3_waypoints()
+ return {create_point(3,3,1),
+  create_point(8,3,1),
+  create_point(8,8,1)}
+end
+
 function create_l3_points()
  l3_points={}
  for y=0,6 do
@@ -612,6 +700,12 @@ function create_l3_points()
   end
  end
  return l3_points
+end
+
+function create_l2_waypoints()
+ return {create_point(3,8,1),
+  create_point(8,8,1),
+  create_point(8,3,1)}
 end
 
 function create_l2_points()
@@ -633,6 +727,12 @@ function create_l2_points()
  end
  return l2_points
 end 
+
+function create_l1_waypoints()
+ return {create_point(3,3,1),
+  create_point(3,8,1),
+  create_point(8,8,1)}
+end
 
 function create_l1_points()
  l1_points={}
@@ -662,7 +762,7 @@ function add_static_tile_to_list(
  x_origin, y_origin)
  tile_index=1
  tile_types={{"corrend_left",97,0},
-  {"corrend_right",123,0},
+  {"corrend_right",121,0},
   {"corrend_up",97,16},
   {"corrend_down",105,16},
   {"corr_horiz",105,0},
@@ -701,8 +801,13 @@ function create_square_tile(
  square_tile=create_tile(
   square_points,3,3,
   spritestart_x,spritestart_y,
-  spritestart_x,spritestart_y)
+  spritestart_x,spritestart_y,
+  create_square_waypoints())
  return square_tile
+end
+
+function create_square_waypoints()
+ return {create_point(3,3,1)}
 end
 
 function create_square_points()
@@ -784,7 +889,7 @@ __gfx__
 000000001dd6dd111111111111dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1111111dd6dd1111115666666066666660566766506666665
 000000001dd6ddddddd11ddddddd6dd1111111dd6dd11dd6dd1111111dd6dd111111111d111111111ddddddd6ddddddd15555555055555550566766505555555
 000000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd10000000000000000000000000000000
-00000000d6666666666dd6666666666d000001dd6dd11dd6dd100000d66666d00000000000000000d666666666666666d5555555056676650566766505555555
+00000000d66c6666666dd6666666666d000001dd6dd11dd6dd100000d66666d00000000000000000d666666666666666d5555555056676650566766505555555
 800000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
 888000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
 80000000111d1111111111111111d11100000111d111111d111000001dd6dd100000000000000000111111dd6dd1111115667777056677770777766507777665
