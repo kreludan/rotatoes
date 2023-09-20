@@ -66,19 +66,19 @@ end
 function _init_waypoints()
   for i = 1, count(rotators_to_draw) do
     for j = 1, count(rotators_to_draw[i].draw_waypoints) do
-      add(
-        waypoints,
-        rotators_to_draw[i].draw_waypoints[j]
-      )
+      local waypoint = {}
+      waypoint.rotator = rotators_to_draw[i]
+      waypoint.draw_waypoint = rotators_to_draw[i].draw_waypoints[j]
+      add(waypoints, waypoint)
     end
   end
 
   for i = 1, count(static_tiles_to_draw) do
     for j = 1, count(static_tiles_to_draw[i].draw_waypoints) do
-      add(
-        waypoints,
-        static_tiles_to_draw[i].draw_waypoints[j]
-      )
+      local waypoint = {}
+      waypoint.rotator = static_tiles_to_draw[i]
+      waypoint.draw_waypoint = static_tiles_to_draw[i].draw_waypoints[j]
+      add(waypoints, waypoint)
     end
   end
 end
@@ -181,8 +181,8 @@ end
 function _debug_drawwaypoints()
   for i = 1, count(waypoints) do
     pset(
-      waypoints[i].x,
-      waypoints[i].y, 12
+      waypoints[i].draw_waypoint.x,
+      waypoints[i].draw_waypoint.y, 12
     )
   end
 end
