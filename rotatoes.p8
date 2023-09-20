@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 16
+version 38
 __lua__
 --global
 function _init()
@@ -13,7 +13,6 @@ function _init()
   _init_static_tiles()
   _init_characters()
   _init_waypoints()
-  --_debug_init_rotators()
 end
 
 function _init_characters()
@@ -928,6 +927,15 @@ function turn_counterclockwise(char)
   else
     char.movement_dir = "right"
   end
+
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x0 - char.center_x
+    zeroed_y = char.draw_points[i].y0 - char.center_y
+    char.draw_points[i].x = zeroed_y  + char.center_x
+    char.draw_points[i].y = (zeroed_x * -1) + char.center_y
+  end
 end
 
 function turn_clockwise(char)
@@ -939,6 +947,15 @@ function turn_clockwise(char)
     char.movement_dir = "up"
   else
     char.movement_dir = "left"
+  end
+
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x0 - char.center_x
+    zeroed_y = char.draw_points[i].y0 - char.center_y
+    char.draw_points[i].x = (zeroed_y * -1)  + char.center_x
+    char.draw_points[i].y = zeroed_x + char.center_y
   end
 end
 

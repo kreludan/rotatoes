@@ -9,7 +9,6 @@ function _init()
   _init_static_tiles()
   _init_characters()
   _init_waypoints()
-  --_debug_init_rotators()
 end
 
 function _init_characters()
