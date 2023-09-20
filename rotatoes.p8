@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 16
+version 38
 __lua__
 --global
 function _init()
@@ -234,10 +234,6 @@ function create_point_w_0s(x, y, x0, y0, c)
   return point
 end
 
-function add_to_points(points, point)
-  add(points, point)
-end
-
 function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, waypoints)
   local tile = {}
   tile.points = points
@@ -280,7 +276,7 @@ function create_drawable_tile(tile, x, y)
 
   --translate the waypoints
   for i = 1, count(tile.waypoints) do
-    add_to_points(
+    add(
       tile.draw_waypoints,
       create_point(
         tile.waypoints[i].x
@@ -294,7 +290,7 @@ function create_drawable_tile(tile, x, y)
 
   --generate each draw point
   for i = 1, count(tile.points) do
-    add_to_points(
+    add(
       tile.draw_points,
       create_point(
         tile.points[i].x + centered_x,
@@ -515,14 +511,14 @@ function create_cross_points()
   cross_points = {}
   for i = 0, 4 do
     if i != 2 then
-      add_to_points(
+      add(
         cross_points,
         create_point(2, i, 1)
       )
     end
   end
   for i = 0, 4 do
-    add_to_points(
+    add(
       cross_points,
       create_point(i, 2, 1)
     )
@@ -544,7 +540,7 @@ function create_plus_points()
   plus_points = {}
   for y = 5, 11 do
     for x = 0, 16 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
@@ -552,13 +548,13 @@ function create_plus_points()
   end
   for x = 5, 11 do
     for y = 0, 4 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
     end
     for y = 12, 16 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
@@ -571,7 +567,7 @@ function create_horiz_points()
   horiz_points = {}
   for y = 0, 6 do
     for x = 0, 16 do
-      add_to_points(
+      add(
         horiz_points,
         create_point(x, y, 1)
       )
@@ -592,7 +588,7 @@ function create_vert_points()
   vert_points = {}
   for y = 0, 16 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         vert_points,
         create_point(x, y, 1)
       )
@@ -621,7 +617,7 @@ function create_l4_points()
   l4_points = {}
   for y = 0, 6 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l4_points,
         create_point(x, y, 1)
       )
@@ -629,7 +625,7 @@ function create_l4_points()
   end
   for y = 7, 11 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         l4_points,
         create_point(x, y, 1)
       )
@@ -650,7 +646,7 @@ function create_l3_points()
   l3_points = {}
   for y = 0, 6 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l3_points,
         create_point(x, y, 1)
       )
@@ -658,7 +654,7 @@ function create_l3_points()
   end
   for y = 7, 11 do
     for x = 5, 11 do
-      add_to_points(
+      add(
         l3_points,
         create_point(x, y, 1)
       )
@@ -679,7 +675,7 @@ function create_l2_points()
   l2_points = {}
   for y = 0, 4 do
     for x = 5, 11 do
-      add_to_points(
+      add(
         l2_points,
         create_point(x, y, 1)
       )
@@ -687,7 +683,7 @@ function create_l2_points()
   end
   for y = 5, 11 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l2_points,
         create_point(x, y, 1)
       )
@@ -708,7 +704,7 @@ function create_l1_points()
   l1_points = {}
   for y = 0, 4 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         l1_points,
         create_point(x, y, 1)
       )
@@ -716,7 +712,7 @@ function create_l1_points()
   end
   for y = 5, 11 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l1_points,
         create_point(x, y, 1)
       )
@@ -781,7 +777,7 @@ function create_square_points()
   square_points = {}
   for x = 0, 6 do
     for y = 0, 6 do
-      add_to_points(
+      add(
         square_points,
         create_point(x, y, 1)
       )
@@ -873,13 +869,13 @@ function create_player_points()
   for y = 0, 2 do
     if y == 1 then
       for x = 0, 2 do
-        add_to_points(
+        add(
           player_points,
           create_point(x, y, 1)
         )
       end
     else
-      add_to_points(
+      add(
         player_points,
         create_point(0, y, 1)
       )
@@ -922,4 +918,3 @@ __gfx__
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
-

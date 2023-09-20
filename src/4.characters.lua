@@ -80,13 +80,13 @@ function create_player_points()
   for y = 0, 2 do
     if y == 1 then
       for x = 0, 2 do
-        add_to_points(
+        add(
           player_points,
           create_point(x, y, 1)
         )
       end
     else
-      add_to_points(
+      add(
         player_points,
         create_point(0, y, 1)
       )

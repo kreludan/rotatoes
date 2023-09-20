@@ -53,7 +53,7 @@ function create_square_points()
   square_points = {}
   for x = 0, 6 do
     for y = 0, 6 do
-      add_to_points(
+      add(
         square_points,
         create_point(x, y, 1)
       )

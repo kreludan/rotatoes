@@ -18,10 +18,6 @@ function create_point_w_0s(x, y, x0, y0, c)
   return point
 end
 
-function add_to_points(points, point)
-  add(points, point)
-end
-
 function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, waypoints)
   local tile = {}
   tile.points = points
@@ -64,7 +60,7 @@ function create_drawable_tile(tile, x, y)
 
   --translate the waypoints
   for i = 1, count(tile.waypoints) do
-    add_to_points(
+    add(
       tile.draw_waypoints,
       create_point(
         tile.waypoints[i].x
@@ -78,7 +74,7 @@ function create_drawable_tile(tile, x, y)
 
   --generate each draw point
   for i = 1, count(tile.points) do
-    add_to_points(
+    add(
       tile.draw_points,
       create_point(
         tile.points[i].x + centered_x,

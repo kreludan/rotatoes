@@ -101,14 +101,14 @@ function create_cross_points()
   cross_points = {}
   for i = 0, 4 do
     if i != 2 then
-      add_to_points(
+      add(
         cross_points,
         create_point(2, i, 1)
       )
     end
   end
   for i = 0, 4 do
-    add_to_points(
+    add(
       cross_points,
       create_point(i, 2, 1)
     )
@@ -130,7 +130,7 @@ function create_plus_points()
   plus_points = {}
   for y = 5, 11 do
     for x = 0, 16 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
@@ -138,13 +138,13 @@ function create_plus_points()
   end
   for x = 5, 11 do
     for y = 0, 4 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
     end
     for y = 12, 16 do
-      add_to_points(
+      add(
         plus_points,
         create_point(x, y, 1)
       )
@@ -157,7 +157,7 @@ function create_horiz_points()
   horiz_points = {}
   for y = 0, 6 do
     for x = 0, 16 do
-      add_to_points(
+      add(
         horiz_points,
         create_point(x, y, 1)
       )
@@ -178,7 +178,7 @@ function create_vert_points()
   vert_points = {}
   for y = 0, 16 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         vert_points,
         create_point(x, y, 1)
       )
@@ -207,7 +207,7 @@ function create_l4_points()
   l4_points = {}
   for y = 0, 6 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l4_points,
         create_point(x, y, 1)
       )
@@ -215,7 +215,7 @@ function create_l4_points()
   end
   for y = 7, 11 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         l4_points,
         create_point(x, y, 1)
       )
@@ -236,7 +236,7 @@ function create_l3_points()
   l3_points = {}
   for y = 0, 6 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l3_points,
         create_point(x, y, 1)
       )
@@ -244,7 +244,7 @@ function create_l3_points()
   end
   for y = 7, 11 do
     for x = 5, 11 do
-      add_to_points(
+      add(
         l3_points,
         create_point(x, y, 1)
       )
@@ -265,7 +265,7 @@ function create_l2_points()
   l2_points = {}
   for y = 0, 4 do
     for x = 5, 11 do
-      add_to_points(
+      add(
         l2_points,
         create_point(x, y, 1)
       )
@@ -273,7 +273,7 @@ function create_l2_points()
   end
   for y = 5, 11 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l2_points,
         create_point(x, y, 1)
       )
@@ -294,7 +294,7 @@ function create_l1_points()
   l1_points = {}
   for y = 0, 4 do
     for x = 0, 6 do
-      add_to_points(
+      add(
         l1_points,
         create_point(x, y, 1)
       )
@@ -302,7 +302,7 @@ function create_l1_points()
   end
   for y = 5, 11 do
     for x = 0, 11 do
-      add_to_points(
+      add(
         l1_points,
         create_point(x, y, 1)
       )
