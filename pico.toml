@@ -1,0 +1,8 @@
+author = "vikarus"
+cart = "rotatoes.p8"
+description = "game where you can rotate stuff waow"
+name = "rotatoes"
+open_pico = true
+src_dir = "src"
+version = "1.0.0"
+watch = false
