@@ -802,6 +802,7 @@ function get_next_waypoint(char, waypoints, max_distance)
   potential_next_waypoint = search_for_waypoint_in_direction(
   char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
   if potential_next_waypoint != nil then
+    set_origins(char)
     turn_clockwise(char)
     return potential_next_waypoint
   end
@@ -810,6 +811,7 @@ function get_next_waypoint(char, waypoints, max_distance)
   potential_next_waypoint = search_for_waypoint_in_direction(
           char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
   if potential_next_waypoint != nil then
+    set_origins(char)
     turn_counterclockwise(char)
     return potential_next_waypoint
   end
@@ -818,6 +820,7 @@ function get_next_waypoint(char, waypoints, max_distance)
   potential_next_waypoint = search_for_waypoint_in_direction(
           char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
   if potential_next_waypoint != nil then
+    set_origins(char)
     turn_180_degrees(char)
     return potential_next_waypoint
   end
@@ -948,6 +951,13 @@ function turn_180_degrees(char)
     char.movement_dir = "down"
   else
     char.movement_dir = "up"
+  end
+
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    char.draw_points[i].x = (x_origin*2) - char.draw_points[i].x0
+    char.draw_points[i].y = (y_origin*2) - char.draw_points[i].y0
   end
 end
 
