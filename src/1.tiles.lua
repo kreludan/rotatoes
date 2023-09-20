@@ -43,6 +43,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.parent_tile = nil
   tile.movement_dir = nil
   tile.char_speed = nil
+  tile.waypoint_from = nil
+  tile.waypoint_to = nil
   return tile
 end
 

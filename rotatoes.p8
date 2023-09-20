@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 38
+version 16
 __lua__
 --global
 function _init()
@@ -64,7 +64,6 @@ function _init_static_tiles()
       static_tile_blueprint[i][3]
     )
   end
-
 end
 
 function _init_waypoints()
@@ -172,23 +171,25 @@ function _draw()
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
+    get_next_waypoint(characters_to_draw[i], waypoints, 7)
   end
 
-  _debug_drawwaypoints()
+  --_debug_drawwaypoints()
   _debuglogs()
 end
 
 function _draw_ui_elements()
-  rect(0, 0, 127, 127, 7)
+  --rect(0, 0, 127, 127, 7)
 end
 
 function _debug_drawwaypoints()
+  --[[
   for i = 1, count(waypoints) do
     pset(
       waypoints[i].draw_waypoint.x,
       waypoints[i].draw_waypoint.y, 12
     )
-  end
+  end--]]
 end
 
 
@@ -259,6 +260,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.parent_tile = nil
   tile.movement_dir = nil
   tile.char_speed = nil
+  tile.waypoint_from = nil
+  tile.waypoint_to = nil
   return tile
 end
 
@@ -798,7 +801,144 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
   )
 end
 
-function turn_90_degrees(char)
+function get_next_waypoint(char, waypoints, max_distance)
+  curr_x = char.center_x
+  curr_y = char.center_y
+  eligible_waypoints_horizontal = {}
+  eligible_waypoints_vertical = {}
+  for i=1,count(waypoints) do
+    if waypoints[i].draw_waypoint.x == curr_x then
+      add(eligible_waypoints_vertical, waypoints[i])
+    elseif waypoints[i].draw_waypoint.y == curr_y then
+      add(eligible_waypoints_horizontal, waypoints[i])
+    end
+  end
+
+  x_forward, y_forward = get_unitvector_ahead(char)
+  potential_next_waypoint = search_for_waypoint_in_direction(
+          char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
+  if potential_next_waypoint != nil then
+    return potential_next_waypoint
+  end
+
+  x_forward, y_forward = get_unitvector_clockwise(char)
+  potential_next_waypoint = search_for_waypoint_in_direction(
+  char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
+  if potential_next_waypoint != nil then
+    turn_clockwise(char)
+    return potential_next_waypoint
+  end
+
+  x_forward, y_forward = get_unitvector_counterclockwise(char)
+  potential_next_waypoint = search_for_waypoint_in_direction(
+          char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
+  if potential_next_waypoint != nil then
+    turn_counterclockwise(char)
+    return potential_next_waypoint
+  end
+
+  x_forward, y_forward = get_unitvector_behind(char)
+  potential_next_waypoint = search_for_waypoint_in_direction(
+          char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
+  if potential_next_waypoint != nil then
+    turn_180_degrees(char)
+    return potential_next_waypoint
+  end
+
+  --print("found nothing")
+  return
+end
+
+function search_for_waypoint_in_direction(char, waypoints_horiz, waypoints_vert, x_dir, y_dir, max_distance)
+  prospective_x = char.center_x
+  prospective_y = char.center_y
+  prospective_waypoints = {}
+  if x_dir != 0 then
+    prospective_waypoints = waypoints_horiz
+  else
+    prospective_waypoints = waypoints_vert
+  end
+  for i=1,max_distance do
+    prospective_x = prospective_x + x_dir
+    prospective_y = prospective_y + y_dir
+    for j=1,count(prospective_waypoints) do
+      if prospective_waypoints[j].draw_waypoint.x == prospective_x and
+              prospective_waypoints[j].draw_waypoint.y == prospective_y then
+        return prospective_waypoints[j]
+      end
+    end
+  end
+  --print("womp")
+end
+
+
+
+function get_unitvector_counterclockwise(char)
+  x_ahead = 0
+  if char.movement_dir == "up" then
+    x_ahead = -1
+  elseif char.movement_dir == "down" then
+    x_ahead = 1
+  end
+  y_ahead = 0
+  if char.movement_dir == "right" then
+    y_ahead = -1
+  elseif char.movement_dir == "left" then
+    y_ahead = 1
+  end
+  return x_ahead, y_ahead
+end
+
+function get_unitvector_clockwise(char)
+  x_ahead = 0
+  if char.movement_dir == "up" then
+    x_ahead = 1
+  elseif char.movement_dir == "down" then
+    x_ahead = -1
+  end
+  y_ahead = 0
+  if char.movement_dir == "right" then
+    y_ahead = 1
+  elseif char.movement_dir == "left" then
+    y_ahead = -1
+  end
+  return x_ahead, y_ahead
+end
+
+function get_unitvector_behind(char)
+  x_ahead = 0
+  if char.movement_dir == "right" then
+    x_ahead = -1
+  elseif char.movement_dir == "left" then
+    x_ahead = 1
+  end
+  y_ahead = 0
+  if char.movement_dir == "up" then
+    y_ahead = 1
+  elseif char.movement_dir == "down" then
+    y_ahead = -1
+  end
+  return x_ahead, y_ahead
+end
+
+function get_unitvector_ahead(char)
+  x_ahead = 0
+  if char.movement_dir == "right" then
+    x_ahead = 1
+  elseif char.movement_dir == "left" then
+    x_ahead = -1
+  end
+  y_ahead = 0
+  if char.movement_dir == "up" then
+    y_ahead = -1
+  elseif char.movement_dir == "down" then
+    y_ahead = 1
+  end
+  return x_ahead, y_ahead
+end
+
+
+function turn_counterclockwise(char)
   if char.movement_dir == "right" then
     char.movement_dir = "up"
   elseif char.movement_dir == "up" then
@@ -810,7 +950,7 @@ function turn_90_degrees(char)
   end
 end
 
-function turn_negative_90_degrees(char)
+function turn_clockwise(char)
   if char.movement_dir == "right" then
     char.movement_dir = "down"
   elseif char.movement_dir == "up" then
@@ -835,7 +975,7 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  char_speed = 1
+  char_speed = 0.5
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
   elseif char.movement_dir == "left" then
@@ -918,3 +1058,4 @@ __gfx__
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
+

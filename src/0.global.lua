@@ -60,7 +60,6 @@ function _init_static_tiles()
       static_tile_blueprint[i][3]
     )
   end
-
 end
 
 function _init_waypoints()
@@ -168,23 +167,25 @@ function _draw()
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
+    get_next_waypoint(characters_to_draw[i], waypoints, 7)
   end
 
-  _debug_drawwaypoints()
+  --_debug_drawwaypoints()
   _debuglogs()
 end
 
 function _draw_ui_elements()
-  rect(0, 0, 127, 127, 7)
+  --rect(0, 0, 127, 127, 7)
 end
 
 function _debug_drawwaypoints()
+  --[[
   for i = 1, count(waypoints) do
     pset(
       waypoints[i].draw_waypoint.x,
       waypoints[i].draw_waypoint.y, 12
     )
-  end
+  end--]]
 end
 
 
