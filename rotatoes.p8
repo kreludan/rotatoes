@@ -144,9 +144,9 @@ function _handlerotends()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
       rotators_to_draw[i].thetacounter += rotators_to_draw[i].theta
-      if rotators_to_draw[i].thetacounter
-          == 90 then
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i])
+      if rotators_to_draw[i].thetacounter == 90 then
+        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_waypoints)
+        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_points)
         rotators_to_draw[i].rotating = false
         thetacounter = 0
       end
@@ -375,24 +375,23 @@ function set_origins(tile)
     tile.draw_points[i].x0 = tile.draw_points[i].x
     tile.draw_points[i].y0 = tile.draw_points[i].y
   end
+  for i = 1, count(tile.draw_waypoints) do
+    tile.draw_waypoints[i].x0 = tile.draw_waypoints[i].x
+    tile.draw_waypoints[i].y0 = tile.draw_waypoints[i].y
+  end
   return tile
 end
 
-function reorient_waypoints()
-end
-
-function fix_end_rot(tile)
-  for i = 1, count(tile.draw_points) do
-    tpx0 = tile.draw_points[i].x0
-        - tile.center_x
-    tpy0 = tile.draw_points[i].y0
-        - tile.center_y
+function fix_end_rot(tile, tile_points)
+  for i = 1, count(tile_points) do
+    tpx0 = tile_points[i].x0 - tile.center_x
+    tpy0 = tile_points[i].y0 - tile.center_y
     if tile.rotatedir == 1 then
-      tile.draw_points[i].x = tpy0 + tile.center_x
-      tile.draw_points[i].y = -tpx0 + tile.center_y
+      tile_points[i].x = tpy0 + tile.center_x
+      tile_points[i].y = -tpx0 + tile.center_y
     elseif tile.rotatedir == -1 then
-      tile.draw_points[i].x = -tpy0 + tile.center_x
-      tile.draw_points[i].y = tpx0 + tile.center_y
+      tile_points[i].x = -tpy0 + tile.center_x
+      tile_points[i].y = tpx0 + tile.center_y
     end
   end
   return tile

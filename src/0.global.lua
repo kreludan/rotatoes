@@ -140,9 +140,9 @@ function _handlerotends()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
       rotators_to_draw[i].thetacounter += rotators_to_draw[i].theta
-      if rotators_to_draw[i].thetacounter
-          == 90 then
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i])
+      if rotators_to_draw[i].thetacounter == 90 then
+        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_waypoints)
+        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_points)
         rotators_to_draw[i].rotating = false
         thetacounter = 0
       end
