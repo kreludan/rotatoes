@@ -9,6 +9,42 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
   )
 end
 
+function turn_90_degrees(char)
+  if char.movement_dir == "right" then
+    char.movement_dir = "up"
+  elseif char.movement_dir == "up" then
+    char.movement_dir = "left"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "down"
+  else
+    char.movement_dir = "right"
+  end
+end
+
+function turn_negative_90_degrees(char)
+  if char.movement_dir == "right" then
+    char.movement_dir = "down"
+  elseif char.movement_dir == "up" then
+    char.movement_dir = "right"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "up"
+  else
+    char.movement_dir = "left"
+  end
+end
+
+function turn_180_degrees(char)
+  if char.movement_dir == "right" then
+    char.movement_dir = "left"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "right"
+  elseif char.movement_dir == "up" then
+    char.movement_dir = "down"
+  else
+    char.movement_dir = "up"
+  end
+end
+
 function move_character(char)
   char_speed = 1
   if char.movement_dir == "right" then
