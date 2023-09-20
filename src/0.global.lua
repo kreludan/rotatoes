@@ -171,11 +171,10 @@ function _draw()
   end
 
   --_debug_drawwaypoints()
-  _debuglogs()
 end
 
 function _draw_ui_elements()
-  --rect(0, 0, 127, 127, 7)
+  rect(0, 0, 127, 127, 7)
 end
 
 function _debug_drawwaypoints()
@@ -186,26 +185,4 @@ function _debug_drawwaypoints()
       waypoints[i].draw_waypoint.y, 12
     )
   end--]]
-end
-
-
-function _debuglogs()
---[[
-  --print(controlled_tile)
- for i=1,count(rotators_to_draw) do
-  print(rotators_to_draw[i].rotating)
-  print(rotators_to_draw[i].thetacounter)
-  print(rotators_to_draw[i].rotatedir)
- end
-
- ox=rotators_to_draw[2].center_x
- oy=rotators_to_draw[2].center_y
- print(""..ox.." "..oy.."")
- a1=rotators_to_draw[2].draw_points[1].x
- b1=rotators_to_draw[2].draw_points[1].y
- a2=rotators_to_draw[2].draw_points[1].x0
- b2=rotators_to_draw[2].draw_points[1].y0
- print(""..a1.." "..b1.."")
- print(""..a2.." "..b2.."")
- --]]
 end
