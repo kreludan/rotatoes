@@ -43,6 +43,7 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.parent_tile = nil
   tile.movement_dir = nil
   tile.char_speed = nil
+  tile.tile_on = nil
   tile.waypoint_from = nil
   tile.waypoint_to = nil
   return tile
@@ -139,9 +140,7 @@ function create_rotated_point(point, x0, y0, theta)
   return newpoint
 end
 
-function rotate_tile(tile)
-  cx = tile.center_x
-  cy = tile.center_y
+function rotate_tile(tile, cx, cy)
   for i = 1, count(tile.draw_points) do
     local newpoint = create_rotated_point(
       tile.draw_points[i],

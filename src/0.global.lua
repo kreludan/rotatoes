@@ -1,5 +1,6 @@
 function _init()
   cls()
+  max_distance = 7
   controlled_tile = 1
   rotators_to_draw = {}
   static_tiles_to_draw = {}
@@ -9,14 +10,19 @@ function _init()
   _init_static_tiles()
   _init_characters()
   _init_waypoints()
+  _init_character_details()
 end
 
 function _init_characters()
   add_char_to_list(
     "player",
     characters_to_draw,
-    43, 63
+    30, 63
   )
+end
+
+function _init_character_details()
+
 end
 
 function _init_rotators()
@@ -65,7 +71,7 @@ function _init_waypoints()
   for i = 1, count(rotators_to_draw) do
     for j = 1, count(rotators_to_draw[i].draw_waypoints) do
       local waypoint = {}
-      waypoint.rotator = rotators_to_draw[i]
+      waypoint.tile_on = rotators_to_draw[i]
       waypoint.draw_waypoint = rotators_to_draw[i].draw_waypoints[j]
       add(waypoints, waypoint)
     end
@@ -74,7 +80,7 @@ function _init_waypoints()
   for i = 1, count(static_tiles_to_draw) do
     for j = 1, count(static_tiles_to_draw[i].draw_waypoints) do
       local waypoint = {}
-      waypoint.rotator = static_tiles_to_draw[i]
+      waypoint.tile_on = static_tiles_to_draw[i]
       waypoint.draw_waypoint = static_tiles_to_draw[i].draw_waypoints[j]
       add(waypoints, waypoint)
     end
@@ -129,7 +135,7 @@ end
 function _handlerots()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
-      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i])
+      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i], rotators_to_draw[i].center_x, rotators_to_draw[i].center_y)
     end
   end
 end
@@ -162,11 +168,12 @@ function _draw()
 
   for i = 1, count(static_tiles_to_draw) do
     draw_tile(static_tiles_to_draw[i], false)
+    --_debug_draw_waypoints_for_tile(static_tiles_to_draw[i])
   end
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
-    get_next_waypoint(characters_to_draw[i], waypoints, 7)
+    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
   --_debug_drawwaypoints()
@@ -174,6 +181,12 @@ end
 
 function _draw_ui_elements()
   rect(0, 0, 127, 127, 7)
+end
+
+function _debug_draw_waypoints_for_tile(tile)
+  for i = 1,count(tile.draw_waypoints) do
+    pset(tile.draw_waypoints[i].x, tile.draw_waypoints[i].y, 12)
+  end
 end
 
 function _debug_drawwaypoints()

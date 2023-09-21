@@ -4,6 +4,7 @@ __lua__
 --global
 function _init()
   cls()
+  max_distance = 7
   controlled_tile = 1
   rotators_to_draw = {}
   static_tiles_to_draw = {}
@@ -13,14 +14,19 @@ function _init()
   _init_static_tiles()
   _init_characters()
   _init_waypoints()
+  _init_character_details()
 end
 
 function _init_characters()
   add_char_to_list(
     "player",
     characters_to_draw,
-    43, 63
+    30, 63
   )
+end
+
+function _init_character_details()
+
 end
 
 function _init_rotators()
@@ -69,7 +75,7 @@ function _init_waypoints()
   for i = 1, count(rotators_to_draw) do
     for j = 1, count(rotators_to_draw[i].draw_waypoints) do
       local waypoint = {}
-      waypoint.rotator = rotators_to_draw[i]
+      waypoint.tile_on = rotators_to_draw[i]
       waypoint.draw_waypoint = rotators_to_draw[i].draw_waypoints[j]
       add(waypoints, waypoint)
     end
@@ -78,7 +84,7 @@ function _init_waypoints()
   for i = 1, count(static_tiles_to_draw) do
     for j = 1, count(static_tiles_to_draw[i].draw_waypoints) do
       local waypoint = {}
-      waypoint.rotator = static_tiles_to_draw[i]
+      waypoint.tile_on = static_tiles_to_draw[i]
       waypoint.draw_waypoint = static_tiles_to_draw[i].draw_waypoints[j]
       add(waypoints, waypoint)
     end
@@ -133,7 +139,7 @@ end
 function _handlerots()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
-      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i])
+      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i], rotators_to_draw[i].center_x, rotators_to_draw[i].center_y)
     end
   end
 end
@@ -166,11 +172,12 @@ function _draw()
 
   for i = 1, count(static_tiles_to_draw) do
     draw_tile(static_tiles_to_draw[i], false)
+    --_debug_draw_waypoints_for_tile(static_tiles_to_draw[i])
   end
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
-    get_next_waypoint(characters_to_draw[i], waypoints, 7)
+    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
   --_debug_drawwaypoints()
@@ -178,6 +185,12 @@ end
 
 function _draw_ui_elements()
   rect(0, 0, 127, 127, 7)
+end
+
+function _debug_draw_waypoints_for_tile(tile)
+  for i = 1,count(tile.draw_waypoints) do
+    pset(tile.draw_waypoints[i].x, tile.draw_waypoints[i].y, 12)
+  end
 end
 
 function _debug_drawwaypoints()
@@ -236,6 +249,7 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.parent_tile = nil
   tile.movement_dir = nil
   tile.char_speed = nil
+  tile.tile_on = nil
   tile.waypoint_from = nil
   tile.waypoint_to = nil
   return tile
@@ -332,9 +346,7 @@ function create_rotated_point(point, x0, y0, theta)
   return newpoint
 end
 
-function rotate_tile(tile)
-  cx = tile.center_x
-  cy = tile.center_y
+function rotate_tile(tile, cx, cy)
   for i = 1, count(tile.draw_points) do
     local newpoint = create_rotated_point(
       tile.draw_points[i],
@@ -784,7 +796,12 @@ function get_next_waypoint(char, waypoints, max_distance)
   eligible_waypoints_vertical = {}
   for i=1,count(waypoints) do
     if waypoints[i].draw_waypoint.x == curr_x then
-      add(eligible_waypoints_vertical, waypoints[i])
+      if waypoints[i].draw_waypoint.y == curr_y then
+        char.waypoint_from = waypoints[i]
+        char.tile_on = waypoints[i].tile_on
+      else
+        add(eligible_waypoints_vertical, waypoints[i])
+      end
     elseif waypoints[i].draw_waypoint.y == curr_y then
       add(eligible_waypoints_horizontal, waypoints[i])
     end
@@ -794,7 +811,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   potential_next_waypoint = search_for_waypoint_in_direction(
           char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
   if potential_next_waypoint != nil then
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_clockwise(char)
@@ -803,7 +821,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_clockwise(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_counterclockwise(char)
@@ -812,7 +831,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_counterclockwise(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_behind(char)
@@ -821,7 +841,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_180_degrees(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   --print("found nothing")
@@ -847,7 +868,6 @@ function search_for_waypoint_in_direction(char, waypoints_horiz, waypoints_vert,
       end
     end
   end
-  --print("womp")
 end
 
 
@@ -979,7 +999,7 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  char_speed = 0.5
+  char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
   elseif char.movement_dir == "left" then

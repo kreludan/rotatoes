@@ -16,7 +16,12 @@ function get_next_waypoint(char, waypoints, max_distance)
   eligible_waypoints_vertical = {}
   for i=1,count(waypoints) do
     if waypoints[i].draw_waypoint.x == curr_x then
-      add(eligible_waypoints_vertical, waypoints[i])
+      if waypoints[i].draw_waypoint.y == curr_y then
+        char.waypoint_from = waypoints[i]
+        char.tile_on = waypoints[i].tile_on
+      else
+        add(eligible_waypoints_vertical, waypoints[i])
+      end
     elseif waypoints[i].draw_waypoint.y == curr_y then
       add(eligible_waypoints_horizontal, waypoints[i])
     end
@@ -26,7 +31,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   potential_next_waypoint = search_for_waypoint_in_direction(
           char, eligible_waypoints_horizontal, eligible_waypoints_vertical, x_forward, y_forward, max_distance)
   if potential_next_waypoint != nil then
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_clockwise(char)
@@ -35,7 +41,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_clockwise(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_counterclockwise(char)
@@ -44,7 +51,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_counterclockwise(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   x_forward, y_forward = get_unitvector_behind(char)
@@ -53,7 +61,8 @@ function get_next_waypoint(char, waypoints, max_distance)
   if potential_next_waypoint != nil then
     set_origins(char)
     turn_180_degrees(char)
-    return potential_next_waypoint
+    char.waypoint_to = potential_next_waypoint
+    return
   end
 
   --print("found nothing")
@@ -79,7 +88,6 @@ function search_for_waypoint_in_direction(char, waypoints_horiz, waypoints_vert,
       end
     end
   end
-  --print("womp")
 end
 
 
@@ -211,7 +219,7 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  char_speed = 0.5
+  char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
   elseif char.movement_dir == "left" then
