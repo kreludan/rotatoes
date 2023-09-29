@@ -22,7 +22,9 @@ function _init_characters()
 end
 
 function _init_character_details()
-
+  for i=1,count(characters_to_draw) do
+    characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
+  end
 end
 
 function _init_rotators()
@@ -31,7 +33,7 @@ function _init_rotators()
     { "l1", 30, 30 },
     { "l2", 50, 30 },
     { "l3", 70, 30 },
-    { "l4", 90, 30 },
+    { "l4", 96, 51 },
     { "horiz", 30, 90 },
     { "plus", 50, 90 }
   }
@@ -176,7 +178,7 @@ function _draw()
     get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
-  --_debug_drawwaypoints()
+  _debug_drawwaypoints()
 end
 
 function _draw_ui_elements()
@@ -190,11 +192,8 @@ function _debug_draw_waypoints_for_tile(tile)
 end
 
 function _debug_drawwaypoints()
-  --[[
-  for i = 1, count(waypoints) do
-    pset(
-      waypoints[i].draw_waypoint.x,
-      waypoints[i].draw_waypoint.y, 12
-    )
-  end--]]
+  tile_on = get_tile_on(characters_to_draw[1])
+  for i = 1, count(tile_on.draw_waypoints) do
+    pset(tile_on.draw_waypoints[i].x, tile_on.draw_waypoints[i].y, 12)
+  end
 end

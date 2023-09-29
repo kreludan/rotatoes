@@ -9,6 +9,41 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
   )
 end
 
+function get_starting_waypoint(char, waypoints)
+  for i=1, count(waypoints) do
+    if char.center_x == waypoints[i].draw_waypoint.x and char.center_y == waypoints[i].draw_waypoint.y then
+      return waypoints[i]
+    end
+  end
+  return nil
+end
+
+function get_tile_on(char)
+  waypoint_to = char.waypoint_to
+  waypoint_from = char.waypoint_from
+  -- case 1: the waypoints are on the same tile
+  if waypoint_to.tile_on == waypoint_from.tile_on then
+    return waypoint_to.tile_on
+  end
+  -- case 2: vertical travel. x-axes of the two waypoints are the same.
+  if waypoint_to.x == waypoint_from.x then
+    if abs(waypoint_to.draw_waypoint.y - char.center_y) <= abs(waypoint_from.draw_waypoint.y - char.center_y) then
+      return waypoint_to.tile_on
+    else
+      return waypoint_from.tile_on
+    end
+    -- case 3: horizontal travel. y-axes of the two waypoints are the same.
+  elseif waypoint_to.y == waypoint_from.y then
+    if abs(waypoint_to.x - char.center_x) <= abs(waypoint_from.x - char.center_x) then
+      return waypoint_to.tile_on
+    else
+      return waypoint_from.tile_on
+    end
+  end
+  -- this should never happen :koyoriWao:
+  return nil
+end
+
 function get_next_waypoint(char, waypoints, max_distance)
   curr_x = char.center_x
   curr_y = char.center_y
@@ -64,8 +99,6 @@ function get_next_waypoint(char, waypoints, max_distance)
     char.waypoint_to = potential_next_waypoint
     return
   end
-
-  --print("found nothing")
   return
 end
 

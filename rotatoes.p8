@@ -26,7 +26,9 @@ function _init_characters()
 end
 
 function _init_character_details()
-
+  for i=1,count(characters_to_draw) do
+    characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
+  end
 end
 
 function _init_rotators()
@@ -35,7 +37,7 @@ function _init_rotators()
     { "l1", 30, 30 },
     { "l2", 50, 30 },
     { "l3", 70, 30 },
-    { "l4", 90, 30 },
+    { "l4", 96, 51 },
     { "horiz", 30, 90 },
     { "plus", 50, 90 }
   }
@@ -180,7 +182,7 @@ function _draw()
     get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
-  --_debug_drawwaypoints()
+  _debug_drawwaypoints()
 end
 
 function _draw_ui_elements()
@@ -194,13 +196,10 @@ function _debug_draw_waypoints_for_tile(tile)
 end
 
 function _debug_drawwaypoints()
-  --[[
-  for i = 1, count(waypoints) do
-    pset(
-      waypoints[i].draw_waypoint.x,
-      waypoints[i].draw_waypoint.y, 12
-    )
-  end--]]
+  tile_on = get_tile_on(characters_to_draw[1])
+  for i = 1, count(tile_on.draw_waypoints) do
+    pset(tile_on.draw_waypoints[i].x, tile_on.draw_waypoints[i].y, 12)
+  end
 end
 -->8
 --tiles
@@ -789,6 +788,41 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
   )
 end
 
+function get_starting_waypoint(char, waypoints)
+  for i=1, count(waypoints) do
+    if char.center_x == waypoints[i].draw_waypoint.x and char.center_y == waypoints[i].draw_waypoint.y then
+      return waypoints[i]
+    end
+  end
+  return nil
+end
+
+function get_tile_on(char)
+  waypoint_to = char.waypoint_to
+  waypoint_from = char.waypoint_from
+  -- case 1: the waypoints are on the same tile
+  if waypoint_to.tile_on == waypoint_from.tile_on then
+    return waypoint_to.tile_on
+  end
+  -- case 2: vertical travel. x-axes of the two waypoints are the same.
+  if waypoint_to.x == waypoint_from.x then
+    if abs(waypoint_to.draw_waypoint.y - char.center_y) <= abs(waypoint_from.draw_waypoint.y - char.center_y) then
+      return waypoint_to.tile_on
+    else
+      return waypoint_from.tile_on
+    end
+    -- case 3: horizontal travel. y-axes of the two waypoints are the same.
+  elseif waypoint_to.y == waypoint_from.y then
+    if abs(waypoint_to.x - char.center_x) <= abs(waypoint_from.x - char.center_x) then
+      return waypoint_to.tile_on
+    else
+      return waypoint_from.tile_on
+    end
+  end
+  -- this should never happen :koyoriWao:
+  return nil
+end
+
 function get_next_waypoint(char, waypoints, max_distance)
   curr_x = char.center_x
   curr_y = char.center_y
@@ -844,8 +878,6 @@ function get_next_waypoint(char, waypoints, max_distance)
     char.waypoint_to = potential_next_waypoint
     return
   end
-
-  --print("found nothing")
   return
 end
 
@@ -1056,7 +1088,7 @@ __gfx__
 000000001dd6dd111111111111dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1111111dd6dd1111115666666066666660566766506666665
 000000001dd6ddddddd11ddddddd6dd1111111dd6dd11dd6dd1111111dd6dd111111111d111111111ddddddd6ddddddd15555555055555550566766505555555
 000000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd10000000000000000000000000000000
-00000000d66c6666666dd6666666666d000001dd6dd11dd6dd100000d66666d00000000000000000d666666666666666d5555555056676650566766505555555
+00000000d6666666666dd6666666666d000001dd6dd11dd6dd100000d66666d00000000000000000d666666666666666d5555555056676650566766505555555
 800000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
 888000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
 80000000111d1111111111111111d11100000111d111111d111000001dd6dd100000000000000000111111dd6dd1111115667777056677770777766507777665
