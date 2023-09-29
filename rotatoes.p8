@@ -102,6 +102,8 @@ end
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
+    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
+    characters_to_draw.tile_on = get_tile_on(characters_to_draw[i])
     characters_to_draw[i] = move_character(characters_to_draw[i])
   end
 end
@@ -179,7 +181,6 @@ function _draw()
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
-    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
   _debug_drawwaypoints()
@@ -1031,6 +1032,10 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
+  if char.tile_on.rotating == true then
+    return char
+  end
+
   char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)

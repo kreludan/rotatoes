@@ -98,6 +98,8 @@ end
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
+    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
+    characters_to_draw.tile_on = get_tile_on(characters_to_draw[i])
     characters_to_draw[i] = move_character(characters_to_draw[i])
   end
 end
@@ -175,7 +177,6 @@ function _draw()
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
-    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
   end
 
   _debug_drawwaypoints()

@@ -252,6 +252,10 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
+  if char.tile_on.rotating == true then
+    return char
+  end
+
   char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
