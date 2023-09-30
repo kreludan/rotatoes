@@ -98,9 +98,11 @@ end
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
-    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
-    characters_to_draw.tile_on = get_tile_on(characters_to_draw[i])
-    characters_to_draw[i] = move_character(characters_to_draw[i])
+    if characters_to_draw[i].rotating == false then
+      get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
+      characters_to_draw[i].tile_on = get_tile_on(characters_to_draw[i])
+      characters_to_draw[i] = move_character(characters_to_draw[i])
+    end
   end
 end
 
@@ -124,14 +126,13 @@ function _handleinputs()
     i = controlled_tile
     if rotators_to_draw[i].rotating
         == false then
-      rotators_to_draw[i].rotating = true
-      rotators_to_draw[i] = set_origins(rotators_to_draw[i])
-      if btnp(0) then
-        rotators_to_draw[i].rotatedir = 1
-      else
-        rotators_to_draw[i].rotatedir = -1
+      local rotatedir = btnp(0) and 1 or -1
+      rotators_to_draw[i] = set_rotating(rotators_to_draw[i], rotatedir)
+      for j = 1, count(characters_to_draw) do
+        if characters_to_draw[j].tile_on == rotators_to_draw[i] then
+          characters_to_draw[j] = set_rotating(characters_to_draw[j], rotatedir)
+        end
       end
-      rotators_to_draw[i].thetacounter = 0
     end
   end
 end
@@ -139,7 +140,12 @@ end
 function _handlerots()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
-      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i], rotators_to_draw[i].center_x, rotators_to_draw[i].center_y)
+      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i])
+    end
+  end
+  for i = 1, count(characters_to_draw) do
+    if characters_to_draw[i].rotating then
+      characters_to_draw[i] = rotate_tile(characters_to_draw[i])
     end
   end
 end
@@ -148,12 +154,13 @@ function _handlerotends()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
       rotators_to_draw[i].thetacounter += rotators_to_draw[i].theta
-      if rotators_to_draw[i].thetacounter == 90 then
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_waypoints)
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_points)
-        rotators_to_draw[i].rotating = false
-        thetacounter = 0
-      end
+      check_rotate_end(rotators_to_draw[i])
+    end
+  end
+  for i = 1, count(characters_to_draw) do
+    if characters_to_draw[i].rotating then
+      characters_to_draw[i].thetacounter += characters_to_draw[i].theta
+      check_rotate_end(characters_to_draw[i])
     end
   end
 end

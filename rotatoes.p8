@@ -102,9 +102,11 @@ end
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
-    get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
-    characters_to_draw.tile_on = get_tile_on(characters_to_draw[i])
-    characters_to_draw[i] = move_character(characters_to_draw[i])
+    if characters_to_draw[i].rotating == false then
+      get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
+      characters_to_draw[i].tile_on = get_tile_on(characters_to_draw[i])
+      characters_to_draw[i] = move_character(characters_to_draw[i])
+    end
   end
 end
 
@@ -126,16 +128,14 @@ function _handleinputs()
 
   if btnp(0) or btnp(1) then
     i = controlled_tile
-    if rotators_to_draw[i].rotating
-        == false then
-      rotators_to_draw[i].rotating = true
-      rotators_to_draw[i] = set_origins(rotators_to_draw[i])
-      if btnp(0) then
-        rotators_to_draw[i].rotatedir = 1
-      else
-        rotators_to_draw[i].rotatedir = -1
+    if rotators_to_draw[i].rotating == false then
+      local rotatedir = btnp(0) and 1 or -1
+      rotators_to_draw[i] = set_rotating(rotators_to_draw[i], rotatedir)
+      for j = 1, count(characters_to_draw) do
+        if characters_to_draw[j].tile_on == rotators_to_draw[i] then
+          characters_to_draw[j] = set_rotating(characters_to_draw[j], rotatedir)
+        end
       end
-      rotators_to_draw[i].thetacounter = 0
     end
   end
 end
@@ -143,7 +143,12 @@ end
 function _handlerots()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
-      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i], rotators_to_draw[i].center_x, rotators_to_draw[i].center_y)
+      rotators_to_draw[i] = rotate_tile(rotators_to_draw[i])
+    end
+  end
+  for i = 1, count(characters_to_draw) do
+    if characters_to_draw[i].rotating then
+      characters_to_draw[i] = rotate_tile(characters_to_draw[i])
     end
   end
 end
@@ -152,12 +157,13 @@ function _handlerotends()
   for i = 1, count(rotators_to_draw) do
     if rotators_to_draw[i].rotating then
       rotators_to_draw[i].thetacounter += rotators_to_draw[i].theta
-      if rotators_to_draw[i].thetacounter == 90 then
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_waypoints)
-        rotators_to_draw[i] = fix_end_rot(rotators_to_draw[i], rotators_to_draw[i].draw_points)
-        rotators_to_draw[i].rotating = false
-        thetacounter = 0
-      end
+      check_rotate_end(rotators_to_draw[i])
+    end
+  end
+  for i = 1, count(characters_to_draw) do
+    if characters_to_draw[i].rotating then
+      characters_to_draw[i].thetacounter += characters_to_draw[i].theta
+      check_rotate_end(characters_to_draw[i])
     end
   end
 end
@@ -230,6 +236,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.draw_points = {}
   tile.center_x = center_x
   tile.center_y = center_y
+  tile.center_x0 = 0
+  tile.center_y0 = 0
   if waypoints == nil then
     tile.waypoints = {}
   else
@@ -346,7 +354,19 @@ function create_rotated_point(point, x0, y0, theta)
   return newpoint
 end
 
-function rotate_tile(tile, cx, cy)
+function get_rotation_cx_cy(tile)
+  local cx = tile.center_x
+  local cy = tile.center_y
+  if tile.is_character then
+    cx = tile.tile_on.center_x
+    cy = tile.tile_on.center_y
+  end
+  return cx, cy
+end
+
+
+function rotate_tile(tile)
+  local cx, cy = get_rotation_cx_cy(tile)
   for i = 1, count(tile.draw_points) do
     local newpoint = create_rotated_point(
       tile.draw_points[i],
@@ -357,7 +377,17 @@ function rotate_tile(tile, cx, cy)
   return tile
 end
 
+function set_rotating(tile, rotatedir)
+  tile.rotating = true
+  set_origins(tile)
+  tile.rotatedir = rotatedir
+  tile.thetacounter = 0
+  return tile
+end
+
 function set_origins(tile)
+  tile.center_x0 = tile.center_x
+  tile.center_y0 = tile.center_y
   for i = 1, count(tile.draw_points) do
     tile.draw_points[i].x0 = tile.draw_points[i].x
     tile.draw_points[i].y0 = tile.draw_points[i].y
@@ -369,19 +399,47 @@ function set_origins(tile)
   return tile
 end
 
+function check_rotate_end(tile)
+  if tile.thetacounter == 90 then
+    tile = fix_end_rot(tile, tile.draw_waypoints)
+    tile = fix_end_rot(tile, tile.draw_points)
+    tile.rotating = false
+    tile.thetacounter = 0
+    if tile.is_character then
+      fix_end_rot_char(tile)
+    end
+  end
+end
+
 function fix_end_rot(tile, tile_points)
+  local cx, cy = get_rotation_cx_cy(tile)
   for i = 1, count(tile_points) do
-    tpx0 = tile_points[i].x0 - tile.center_x
-    tpy0 = tile_points[i].y0 - tile.center_y
+    tpx0 = tile_points[i].x0 - cx
+    tpy0 = tile_points[i].y0 - cy
     if tile.rotatedir == 1 then
-      tile_points[i].x = tpy0 + tile.center_x
-      tile_points[i].y = -tpx0 + tile.center_y
+      tile_points[i].x = tpy0 + cx
+      tile_points[i].y = -tpx0 + cy
     elseif tile.rotatedir == -1 then
-      tile_points[i].x = -tpy0 + tile.center_x
-      tile_points[i].y = tpx0 + tile.center_y
+      tile_points[i].x = -tpy0 + cx
+      tile_points[i].y = tpx0 + cy
     end
   end
   return tile
+end
+
+function fix_end_rot_char(tile)
+  local cx, cy = get_rotation_cx_cy(tile)
+  tpx0 = tile.center_x0 - cx
+  tpy0 = tile.center_y0 - cy
+  if tile.rotatedir == 1 then
+    tile.center_x = tpy0 + cx
+    tile.center_y = -tpx0 + cy
+    turn_movement_counterclockwise(tile)
+  elseif tile.rotatedir == -1 then
+    tile.center_x = -tpy0 + cx
+    tile.center_y = tpx0 + cy
+    turn_movement_clockwise(tile)
+  end
 end
 
 function translate_tile(tile, x_translate, y_translate)
@@ -834,10 +892,10 @@ function get_next_waypoint(char, waypoints, max_distance)
       if waypoints[i].draw_waypoint.y == curr_y then
         char.waypoint_from = waypoints[i]
         char.tile_on = waypoints[i].tile_on
-      else
+      elseif not waypoints[i].tile_on.rotating then
         add(eligible_waypoints_vertical, waypoints[i])
       end
-    elseif waypoints[i].draw_waypoint.y == curr_y then
+    elseif waypoints[i].draw_waypoint.y == curr_y and not waypoints[i].tile_on.rotating then
       add(eligible_waypoints_horizontal, waypoints[i])
     end
   end
@@ -971,15 +1029,7 @@ end
 
 
 function turn_counterclockwise(char)
-  if char.movement_dir == "right" then
-    char.movement_dir = "up"
-  elseif char.movement_dir == "up" then
-    char.movement_dir = "left"
-  elseif char.movement_dir == "left" then
-    char.movement_dir = "down"
-  else
-    char.movement_dir = "right"
-  end
+  turn_movement_counterclockwise(char)
 
   x_origin = char.center_x
   y_origin = char.center_y
@@ -991,16 +1041,21 @@ function turn_counterclockwise(char)
   end
 end
 
-function turn_clockwise(char)
+function turn_movement_counterclockwise(char)
   if char.movement_dir == "right" then
-    char.movement_dir = "down"
-  elseif char.movement_dir == "up" then
-    char.movement_dir = "right"
-  elseif char.movement_dir == "left" then
     char.movement_dir = "up"
-  else
+  elseif char.movement_dir == "up" then
     char.movement_dir = "left"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "down"
+  else
+    char.movement_dir = "right"
   end
+end
+
+
+function turn_clockwise(char)
+  turn_movement_clockwise(char)
 
   x_origin = char.center_x
   y_origin = char.center_y
@@ -1009,6 +1064,18 @@ function turn_clockwise(char)
     zeroed_y = char.draw_points[i].y0 - char.center_y
     char.draw_points[i].x = (zeroed_y * -1)  + char.center_x
     char.draw_points[i].y = zeroed_x + char.center_y
+  end
+end
+
+function turn_movement_clockwise(char)
+  if char.movement_dir == "right" then
+    char.movement_dir = "down"
+  elseif char.movement_dir == "up" then
+    char.movement_dir = "right"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "up"
+  else
+    char.movement_dir = "left"
   end
 end
 
@@ -1032,10 +1099,6 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  if char.tile_on.rotating == true then
-    return char
-  end
-
   char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)

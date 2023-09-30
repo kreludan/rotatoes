@@ -24,6 +24,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.draw_points = {}
   tile.center_x = center_x
   tile.center_y = center_y
+  tile.center_x0 = 0
+  tile.center_y0 = 0
   if waypoints == nil then
     tile.waypoints = {}
   else
@@ -140,7 +142,18 @@ function create_rotated_point(point, x0, y0, theta)
   return newpoint
 end
 
-function rotate_tile(tile, cx, cy)
+function get_rotation_cx_cy(tile)
+  local cx = tile.center_x
+  local cy = tile.center_y
+  if tile.is_character then
+    cx = tile.tile_on.center_x
+    cy = tile.tile_on.center_y
+  end
+  return cx, cy
+end
+
+function rotate_tile(tile)
+  local cx, cy = get_rotation_cx_cy(tile)
   for i = 1, count(tile.draw_points) do
     local newpoint = create_rotated_point(
       tile.draw_points[i],
@@ -151,7 +164,17 @@ function rotate_tile(tile, cx, cy)
   return tile
 end
 
+function set_rotating(tile, rotatedir)
+  tile.rotating = true
+  set_origins(tile)
+  tile.rotatedir = rotatedir
+  tile.thetacounter = 0
+  return tile
+end
+
 function set_origins(tile)
+  tile.center_x0 = tile.center_x
+  tile.center_y0 = tile.center_y
   for i = 1, count(tile.draw_points) do
     tile.draw_points[i].x0 = tile.draw_points[i].x
     tile.draw_points[i].y0 = tile.draw_points[i].y
@@ -163,19 +186,47 @@ function set_origins(tile)
   return tile
 end
 
+function check_rotate_end(tile)
+  if tile.thetacounter == 90 then
+    tile = fix_end_rot(tile, tile.draw_waypoints)
+    tile = fix_end_rot(tile, tile.draw_points)
+    if tile.is_character then
+      fix_end_rot_char(tile)
+    end
+    tile.rotating = false
+    tile.thetacounter = 0
+  end
+end
+
 function fix_end_rot(tile, tile_points)
+  local cx, cy = get_rotation_cx_cy(tile)
   for i = 1, count(tile_points) do
-    tpx0 = tile_points[i].x0 - tile.center_x
-    tpy0 = tile_points[i].y0 - tile.center_y
+    tpx0 = tile_points[i].x0 - cx
+    tpy0 = tile_points[i].y0 - cy
     if tile.rotatedir == 1 then
-      tile_points[i].x = tpy0 + tile.center_x
-      tile_points[i].y = -tpx0 + tile.center_y
+      tile_points[i].x = tpy0 + cx
+      tile_points[i].y = -tpx0 + cy
     elseif tile.rotatedir == -1 then
-      tile_points[i].x = -tpy0 + tile.center_x
-      tile_points[i].y = tpx0 + tile.center_y
+      tile_points[i].x = -tpy0 + cx
+      tile_points[i].y = tpx0 + cy
     end
   end
   return tile
+end
+
+function fix_end_rot_char(tile)
+  local cx, cy = get_rotation_cx_cy(tile)
+  tpx0 = tile.center_x0 - cx
+  tpy0 = tile.center_y0 - cy
+  if tile.rotatedir == 1 then
+    tile.center_x = tpy0 + cx
+    tile.center_y = -tpx0 + cy
+    turn_movement_counterclockwise(tile)
+  elseif tile.rotatedir == -1 then
+    tile.center_x = -tpy0 + cx
+    tile.center_y = tpx0 + cy
+    turn_movement_clockwise(tile)
+  end
 end
 
 function translate_tile(tile, x_translate, y_translate)

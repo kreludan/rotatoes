@@ -54,10 +54,10 @@ function get_next_waypoint(char, waypoints, max_distance)
       if waypoints[i].draw_waypoint.y == curr_y then
         char.waypoint_from = waypoints[i]
         char.tile_on = waypoints[i].tile_on
-      else
+      elseif not waypoints[i].tile_on.rotating then
         add(eligible_waypoints_vertical, waypoints[i])
       end
-    elseif waypoints[i].draw_waypoint.y == curr_y then
+    elseif waypoints[i].draw_waypoint.y == curr_y and not waypoints[i].tile_on.rotating then
       add(eligible_waypoints_horizontal, waypoints[i])
     end
   end
@@ -191,15 +191,7 @@ end
 
 
 function turn_counterclockwise(char)
-  if char.movement_dir == "right" then
-    char.movement_dir = "up"
-  elseif char.movement_dir == "up" then
-    char.movement_dir = "left"
-  elseif char.movement_dir == "left" then
-    char.movement_dir = "down"
-  else
-    char.movement_dir = "right"
-  end
+  turn_movement_counterclockwise(char)
 
   x_origin = char.center_x
   y_origin = char.center_y
@@ -211,16 +203,21 @@ function turn_counterclockwise(char)
   end
 end
 
-function turn_clockwise(char)
+function turn_movement_counterclockwise(char)
   if char.movement_dir == "right" then
-    char.movement_dir = "down"
-  elseif char.movement_dir == "up" then
-    char.movement_dir = "right"
-  elseif char.movement_dir == "left" then
     char.movement_dir = "up"
-  else
+  elseif char.movement_dir == "up" then
     char.movement_dir = "left"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "down"
+  else
+    char.movement_dir = "right"
   end
+end
+
+
+function turn_clockwise(char)
+  turn_movement_clockwise(char)
 
   x_origin = char.center_x
   y_origin = char.center_y
@@ -229,6 +226,18 @@ function turn_clockwise(char)
     zeroed_y = char.draw_points[i].y0 - char.center_y
     char.draw_points[i].x = (zeroed_y * -1)  + char.center_x
     char.draw_points[i].y = zeroed_x + char.center_y
+  end
+end
+
+function turn_movement_clockwise(char)
+  if char.movement_dir == "right" then
+    char.movement_dir = "down"
+  elseif char.movement_dir == "up" then
+    char.movement_dir = "right"
+  elseif char.movement_dir == "left" then
+    char.movement_dir = "up"
+  else
+    char.movement_dir = "left"
   end
 end
 
@@ -252,10 +261,6 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  if char.tile_on.rotating == true then
-    return char
-  end
-
   char_speed = 1
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
