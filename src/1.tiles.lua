@@ -51,9 +51,10 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   return tile
 end
 
-function cast_tile_to_char(tile, char_type)
+function cast_tile_to_char(tile, char_type, char_speed)
   tile.is_character = true
   tile.char_type = char_type
+  tile.char_speed = char_speed
   tile.movement_dir = "right"
   return tile
 end

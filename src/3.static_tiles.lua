@@ -13,8 +13,7 @@ function add_static_tile_to_list(statictile_type, statictile_list, x_origin, y_o
     { "corr_turn_downright", 113, 8 }
   }
   tile_to_prep = {}
-  while tileindex
-      != count(tile_types) do
+  while tileindex != count(tile_types) do
     if statictile_type
         == tile_types[tile_index][1] then
       tile_to_prep = create_square_tile(

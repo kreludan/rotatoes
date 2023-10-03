@@ -6,6 +6,7 @@ function _init()
   static_tiles_to_draw = {}
   characters_to_draw = {}
   waypoints = {}
+  player = {}
   _init_rotators()
   _init_static_tiles()
   _init_characters()
@@ -15,15 +16,24 @@ end
 
 function _init_characters()
   add_char_to_list(
+          "goal",
+          characters_to_draw,
+          96, 63
+  )
+  add_char_to_list(
     "player",
     characters_to_draw,
     30, 63
   )
+
 end
 
 function _init_character_details()
   for i=1,count(characters_to_draw) do
     characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
+    if characters_to_draw[i].char_type == "player" then
+      player = characters_to_draw[i]
+    end
   end
 end
 
@@ -55,7 +65,7 @@ function _init_static_tiles()
     { "corrend_right", 51, 63 },
     { "corrend_left", 75, 63 },
     { "corr_horiz", 82, 63 },
-    { "corr_horiz", 89, 63 },
+    { "corrend_right", 89, 63 },
     { "corrend_right", 96, 63 }
   }
 
@@ -179,29 +189,14 @@ function _draw()
 
   for i = 1, count(static_tiles_to_draw) do
     draw_tile(static_tiles_to_draw[i], false)
-    --_debug_draw_waypoints_for_tile(static_tiles_to_draw[i])
   end
 
   for i = 1, count(characters_to_draw) do
     draw_tile(characters_to_draw[i], false)
   end
 
-  _debug_drawwaypoints()
 end
 
 function _draw_ui_elements()
   rect(0, 0, 127, 127, 7)
-end
-
-function _debug_draw_waypoints_for_tile(tile)
-  for i = 1,count(tile.draw_waypoints) do
-    pset(tile.draw_waypoints[i].x, tile.draw_waypoints[i].y, 12)
-  end
-end
-
-function _debug_drawwaypoints()
-  tile_on = get_tile_on(characters_to_draw[1])
-  for i = 1, count(tile_on.draw_waypoints) do
-    pset(tile_on.draw_waypoints[i].x, tile_on.draw_waypoints[i].y, 12)
-  end
 end

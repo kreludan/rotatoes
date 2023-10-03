@@ -1,13 +1,17 @@
 function add_char_to_list(char_type, char_list, x_origin, y_origin)
   tile_to_prep = create_player()
+  if char_type == "goal" then
+    tile_to_prep = create_goal()
+  end
+
   add(
-    char_list,
-    create_drawable_tile(
-      tile_to_prep,
-      x_origin, y_origin
-    )
+  char_list,
+  create_drawable_tile(
+  tile_to_prep,
+  x_origin, y_origin
   )
-end
+  )
+  end
 
 function get_starting_waypoint(char, waypoints)
   for i=1, count(waypoints) do
@@ -261,7 +265,7 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  char_speed = 1
+  char_speed = char.char_speed
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
   elseif char.movement_dir == "left" then
@@ -281,14 +285,19 @@ end
 
 function create_player()
   player_points = create_player_points()
-  player_tile = create_tile(
-    player_points, 0, 1, 0, 9, 0, 9
-  )
-  player_tile = cast_tile_to_char(
-    player_tile, "player"
-  )
+  player_tile = create_tile(player_points, 0, 1, 0, 9, 0, 9, nil)
+  player_tile = cast_tile_to_char(player_tile, "player", 1)
   return player_tile
 end
+
+
+function create_goal()
+  goal_points = create_square_points()
+  goal_tile = create_tile(goal_points, 3, 3, 113, 16, 113, 16, nil)
+  goal_tile = cast_tile_to_char(goal_tile, "goal", 0)
+  return goal_tile
+end
+
 
 function create_player_points()
   player_points = {}
