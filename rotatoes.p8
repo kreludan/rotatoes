@@ -8,7 +8,7 @@ function _init()
   level_num = 1 -- current level
 end
 
-function _init_level()
+function _init_level(level_num)
   cls()
   level_state = "playing"
   controlled_tile = 1 -- denotes the tile currently controlled on scene
@@ -27,11 +27,7 @@ function _init_level()
 end
 
 function _init_characters()
-  character_blueprint = {
-    {"goal", 96, 63},
-    {"player", 30, 63},
-    {"deathtile", 63, 75}
-  }
+  character_blueprint = level_blueprints[level_num]["character_blueprint"]
   for i = 1, count(character_blueprint) do
     add_char_to_list(
             character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
@@ -53,15 +49,7 @@ function _init_character_details()
 end
 
 function _init_rotators()
-  rotator_blueprint = {
-    { "vert", 63, 63 },
-    { "l1", 30, 30 },
-    { "l2", 50, 30 },
-    { "l3", 70, 30 },
-    { "l4", 96, 51 },
-    { "horiz", 30, 90 },
-    { "plus", 50, 90 }
-  }
+  rotator_blueprint = level_blueprints[level_num]["rotator_blueprint"]
   for i = 1, count(rotator_blueprint) do
     add_rotator_to_list(
       rotator_blueprint[i][1],
@@ -73,17 +61,7 @@ function _init_rotators()
 end
 
 function _init_static_tiles()
-  static_tile_blueprint = {
-    { "corrend_left", 30, 63 },
-    { "corr_horiz", 37, 63 },
-    { "corr_horiz", 44, 63 },
-    { "corrend_right", 51, 63 },
-    { "corrend_left", 75, 63 },
-    { "corr_horiz", 82, 63 },
-    { "corrend_right", 89, 63 },
-    { "corrend_right", 96, 63 },
-    { "corr_horiz", 63, 75}
-  }
+  static_tile_blueprint = level_blueprints[level_num]["static_tile_blueprint"]
 
   for i = 1, count(static_tile_blueprint) do
     add_static_tile_to_list(
@@ -130,7 +108,7 @@ function _handlecharcollisions()
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
       level_state = "win"
-      level_num += 1
+      level_num = min(count(level_blueprints), level_num + 1)
     end
 
     for j=1, count(level_enemies) do
@@ -158,7 +136,7 @@ function _handleinputs()
     handle_menu_input()
   else
     if btnp(❎) then
-      _init_level()
+      _init_level(level_num)
     else
       handle_playing_input()
     end
@@ -1215,7 +1193,7 @@ end
 
 function handle_menu_input()
   if btnp(❎) then
-    _init_level()
+    _init_level(level_num)
   end
 end
 
@@ -1228,6 +1206,48 @@ function generate_lose_menu()
   print("you lose :(", 44, 20)
   print("press ❎ to restart", 28, 40)
 end
+-->8
+--levels
+level_blueprints = {
+    {level_num = 1,
+     character_blueprint = {
+         {"goal", 96, 63},
+         {"player", 30, 63}
+     },
+     rotator_blueprint = {
+         { "vert", 63, 63 },
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 30, 63 },
+         { "corr_horiz", 37, 63 },
+         { "corr_horiz", 44, 63 },
+         { "corrend_right", 51, 63 },
+         { "corrend_left", 75, 63 },
+         { "corr_horiz", 82, 63 },
+         { "corrend_right", 89, 63 },
+         { "corrend_right", 96, 63 },
+     }},
+    {level_num = 2,
+     character_blueprint = {
+         {"goal", 96, 63},
+         {"player", 30, 63},
+         {"deathtile", 63, 75}
+     },
+     rotator_blueprint = {
+         { "vert", 63, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 30, 63 },
+         { "corr_horiz", 37, 63 },
+         { "corr_horiz", 44, 63 },
+         { "corrend_right", 51, 63 },
+         { "corrend_left", 75, 63 },
+         { "corr_horiz", 82, 63 },
+         { "corrend_right", 89, 63 },
+         { "corrend_right", 96, 63 },
+         { "corr_horiz", 63, 75}
+     }}
+}
 __gfx__
 00600000111d1110000000000111d11111111111d111111d11111111111d11111111111d1111111100000111d111000005555555055555550566766505555555
 006000001dd6dd100000000001dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1000001dd6dd1000005666666066666660566766506666665

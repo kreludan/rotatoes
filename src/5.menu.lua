@@ -5,7 +5,7 @@ end
 
 function handle_menu_input()
   if btnp(❎) then
-    _init_level()
+    _init_level(level_num)
   end
 end
 
