@@ -107,13 +107,11 @@ function _init_waypoints()
 end
 
 function _update()
-  if(level_state == "playing") then
-    _handleinputs()
-    _handlerots()
-    _handlerotends()
-    _handlecharmovement()
-    _handlecharcollisions()
-  end
+  _handleinputs()
+  _handlerots()
+  _handlerotends()
+  _handlecharmovement()
+  _handlecharcollisions()
 end
 
 function _handlecharcollisions()
@@ -144,6 +142,9 @@ function _handlecharmovement()
 end
 
 function _handleinputs()
+  if btnp(❎) then
+    _init()
+  end
   if btnp(⬆️) then
     if controlled_tile
         == count(rotators_to_draw) then
