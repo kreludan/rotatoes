@@ -2,7 +2,7 @@ function _init()
   cls()
   max_distance = 7
   controlled_tile = 1
-  level_state = "playing"
+  level_state = "playing" -- "playing", "win", "lose", "menu"
   rotators_to_draw = {}
   static_tiles_to_draw = {}
   characters_to_draw = {}
@@ -18,17 +18,9 @@ function _init()
 end
 
 function _init_characters()
-  add_char_to_list(
-          "goal",
-          characters_to_draw,
-          96, 63
-  )
-  add_char_to_list(
-    "player",
-    characters_to_draw,
-    30, 63
-  )
-
+  add_char_to_list("goal", characters_to_draw, 96, 63)
+  add_char_to_list("player", characters_to_draw, 30, 63)
+  add_char_to_list("deathtile", characters_to_draw, 63, 75)
 end
 
 function _init_character_details()
@@ -38,6 +30,8 @@ function _init_character_details()
       level_player = characters_to_draw[i]
     elseif characters_to_draw[i].char_type == "goal" then
       level_goal = characters_to_draw[i]
+    else
+      add(level_enemies, characters_to_draw[i])
     end
   end
 end
@@ -71,7 +65,8 @@ function _init_static_tiles()
     { "corrend_left", 75, 63 },
     { "corr_horiz", 82, 63 },
     { "corrend_right", 89, 63 },
-    { "corrend_right", 96, 63 }
+    { "corrend_right", 96, 63 },
+    { "corr_horiz", 63, 75}
   }
 
   for i = 1, count(static_tile_blueprint) do
@@ -119,6 +114,13 @@ function _handlecharcollisions()
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
       level_state = "win"
+    end
+
+    for j=1, count(level_enemies) do
+      if level_player.draw_points[i].x == level_enemies[j].center_x and
+      level_player.draw_points[i].y == level_enemies[j].center_y then
+        level_state = "lose"
+      end
     end
   end
 end
@@ -198,6 +200,8 @@ function _draw()
   _draw_ui_elements()
   if level_state == "win" then
     print("you win :0", 2, 2)
+  elseif level_state == "lose" then
+    print("you lose ):", 2, 2)
   elseif level_state == "playing" then
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then

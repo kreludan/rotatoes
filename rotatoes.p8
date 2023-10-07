@@ -6,7 +6,7 @@ function _init()
   cls()
   max_distance = 7
   controlled_tile = 1
-  level_state = "playing"
+  level_state = "playing" -- "playing", "win", "lose", "menu"
   rotators_to_draw = {}
   static_tiles_to_draw = {}
   characters_to_draw = {}
@@ -22,17 +22,9 @@ function _init()
 end
 
 function _init_characters()
-  add_char_to_list(
-          "goal",
-          characters_to_draw,
-          96, 63
-  )
-  add_char_to_list(
-    "player",
-    characters_to_draw,
-    30, 63
-  )
-
+  add_char_to_list("goal", characters_to_draw, 96, 63)
+  add_char_to_list("player", characters_to_draw, 30, 63)
+  add_char_to_list("deathtile", characters_to_draw, 63, 75)
 end
 
 function _init_character_details()
@@ -42,6 +34,8 @@ function _init_character_details()
       level_player = characters_to_draw[i]
     elseif characters_to_draw[i].char_type == "goal" then
       level_goal = characters_to_draw[i]
+    else
+      add(level_enemies, characters_to_draw[i])
     end
   end
 end
@@ -75,7 +69,8 @@ function _init_static_tiles()
     { "corrend_left", 75, 63 },
     { "corr_horiz", 82, 63 },
     { "corrend_right", 89, 63 },
-    { "corrend_right", 96, 63 }
+    { "corrend_right", 96, 63 },
+    { "corr_horiz", 63, 75}
   }
 
   for i = 1, count(static_tile_blueprint) do
@@ -123,6 +118,13 @@ function _handlecharcollisions()
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
       level_state = "win"
+    end
+
+    for j=1, count(level_enemies) do
+      if level_player.draw_points[i].x == level_enemies[j].center_x and
+      level_player.draw_points[i].y == level_enemies[j].center_y then
+        level_state = "lose"
+      end
     end
   end
 end
@@ -202,6 +204,8 @@ function _draw()
   _draw_ui_elements()
   if level_state == "win" then
     print("you win :0", 2, 2)
+  elseif level_state == "lose" then
+    print("you lose ):", 2, 2)
   elseif level_state == "playing" then
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
@@ -858,8 +862,9 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
     tile_to_prep = create_player()
   elseif char_type == "goal" then
     tile_to_prep = create_goal()
+  elseif char_type == "deathtile" then
+    tile_to_prep = create_deathtile()
   end
-
   add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
 end
 
@@ -1136,16 +1141,20 @@ end
 function create_player()
   player_points = create_player_points()
   player_tile = create_tile(player_points, 0, 1, 0, 9, 0, 9, nil)
-  player_tile = cast_tile_to_char(player_tile, "player", 1)
-  return player_tile
+  return cast_tile_to_char(player_tile, "player", 1)
 end
 
 
 function create_goal()
   goal_points = create_square_points()
   goal_tile = create_tile(goal_points, 3, 3, 113, 16, 113, 16, nil)
-  goal_tile = cast_tile_to_char(goal_tile, "goal", 0)
-  return goal_tile
+  return cast_tile_to_char(goal_tile, "goal", 0)
+end
+
+function create_deathtile()
+  deathtile_points = create_square_points()
+  death_tile = create_tile(deathtile_points, 3, 3, 121, 16, 121, 16, nil)
+  return cast_tile_to_char(death_tile, "deathtile", 0)
 end
 
 
@@ -1185,13 +1194,13 @@ __gfx__
 080000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667666056666660666666506667665
 080000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667665055555550555555505667665
 888000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000000000000000000000000000000000000
-00000000000000000000000000000000000000000000000000000000111d1110000000000000000000000111d11100000555d555056676650333d3330555d555
-00800000222d2220000000000222d22222222222d222222d22222222222d22222222222d2222222200000222d2220000056676650566766503bbbbb305888885
-888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbbbb305888885
-008000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee2000005667665056676650dbbbbbd0d88888d
-000000002ee7ee200000000002ee7ee2d7777777777dd7777777777d2ee7ee2d777777777777777d000002ee7ee20000056676650566766503bbbbb305888885
-888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbbbb305888885
-080000002ee7ee222222222222ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2222222ee7ee22222256676650555d5550333d3330555d555
+00000000000000000000000000000000000000000000000000000000111d1110000000000000000000000111d11100000555d555056676650333d3330222d222
+00800000222d2220000000000222d22222222222d222222d22222222222d22222222222d2222222200000222d2220000056676650566766503bb6bb302886882
+888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbabb30288e882
+008000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee2000005667665056676650d6aaa6d0d6eee6d
+000000002ee7ee200000000002ee7ee2d7777777777dd7777777777d2ee7ee2d777777777777777d000002ee7ee20000056676650566766503bbabb30288e882
+888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bb6bb302886882
+080000002ee7ee222222222222ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2222222ee7ee22222256676650555d5550333d3330222d222
 080000002ee7eeeeeee22eeeeeee7ee2222222ee7ee22ee7ee2222222ee7ee222222222d222222222eeeeeee7eeeeeee20000000000000000000000000000000
 000000002ee7eeeeeee22eeeeeee7ee5000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee20000000000000000000000000000000
 00000000d7777777777dd7777777777d000002ee7ee22ee7ee200000d77777d00000000000000000d777777777777777d0000000000000000000000000000000
@@ -1203,4 +1212,3 @@ __gfx__
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
-
