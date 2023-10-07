@@ -1,15 +1,15 @@
 function _init()
   cls()
-  max_distance = 7
-  controlled_tile = 1
+  max_distance = 7 -- distance to check for a waypoint in a direction
+  controlled_tile = 1 -- denotes the tile currently controlled on scene
   level_state = "playing" -- "playing", "win", "lose", "menu"
-  rotators_to_draw = {}
-  static_tiles_to_draw = {}
-  characters_to_draw = {}
-  waypoints = {}
-  level_player = {}
-  level_goal = {}
-  level_enemies = {}
+  rotators_to_draw = {} -- holds all rotating tiles
+  static_tiles_to_draw = {} -- holds all non-rotating tiles
+  characters_to_draw = {} -- holds all 'characters' (incl. goal and death tiles)
+  waypoints = {} -- holds all waypoints across all rotating/static tiles
+  level_player = {} -- holds the player character
+  level_goal = {} -- holds the goal tile
+  level_enemies = {} -- holds all enemy tiles
   _init_rotators()
   _init_static_tiles()
   _init_characters()
