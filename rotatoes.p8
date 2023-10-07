@@ -22,9 +22,16 @@ function _init()
 end
 
 function _init_characters()
-  add_char_to_list("goal", characters_to_draw, 96, 63)
-  add_char_to_list("player", characters_to_draw, 30, 63)
-  add_char_to_list("deathtile", characters_to_draw, 63, 75)
+  character_blueprint = {
+    {"goal", 96, 63},
+    {"player", 30, 63},
+    {"deathtile", 63, 75}
+  }
+  for i = 1, count(character_blueprint) do
+    add_char_to_list(
+            character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
+    )
+  end
 end
 
 function _init_character_details()
