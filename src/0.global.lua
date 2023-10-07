@@ -116,7 +116,7 @@ end
 
 function _handlecharcollisions()
   for i=1, count(level_player.draw_points) do
-    if level_player.draw_points[i].x == level_goal.draw_points[i].x and
+    if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
       level_state = "win"
     end
