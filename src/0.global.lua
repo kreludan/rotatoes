@@ -2,11 +2,14 @@ function _init()
   cls()
   max_distance = 7
   controlled_tile = 1
+  level_state = "playing"
   rotators_to_draw = {}
   static_tiles_to_draw = {}
   characters_to_draw = {}
   waypoints = {}
-  player = {}
+  level_player = {}
+  level_goal = {}
+  level_enemies = {}
   _init_rotators()
   _init_static_tiles()
   _init_characters()
@@ -32,7 +35,9 @@ function _init_character_details()
   for i=1,count(characters_to_draw) do
     characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
     if characters_to_draw[i].char_type == "player" then
-      player = characters_to_draw[i]
+      level_player = characters_to_draw[i]
+    elseif characters_to_draw[i].char_type == "goal" then
+      level_goal = characters_to_draw[i]
     end
   end
 end
@@ -100,11 +105,24 @@ function _init_waypoints()
 end
 
 function _update()
-  _handleinputs()
-  _handlerots()
-  _handlerotends()
-  _handlecharmovement()
+  if(level_state == "playing") then
+    _handleinputs()
+    _handlerots()
+    _handlerotends()
+    _handlecharmovement()
+    _handlecharcollisions()
+  end
 end
+
+function _handlecharcollisions()
+  for i=1, count(level_player.draw_points) do
+    if level_player.draw_points[i].x == level_goal.draw_points[i].x and
+    level_player.draw_points[i].y == level_goal.center_y then
+      level_state = "win"
+    end
+  end
+end
+
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
@@ -178,22 +196,26 @@ end
 function _draw()
   cls()
   _draw_ui_elements()
+  if level_state == "win" then
+    print("you win :0", 2, 2)
+  elseif level_state == "playing" then
+    for i = 1, count(rotators_to_draw) do
+      if i == controlled_tile then
+        draw_tile(rotators_to_draw[i], true)
+      else
+        draw_tile(rotators_to_draw[i], false)
+      end
+    end
 
-  for i = 1, count(rotators_to_draw) do
-    if i == controlled_tile then
-      draw_tile(rotators_to_draw[i], true)
-    else
-      draw_tile(rotators_to_draw[i], false)
+    for i = 1, count(static_tiles_to_draw) do
+      draw_tile(static_tiles_to_draw[i], false)
+    end
+
+    for i = 1, count(characters_to_draw) do
+      draw_tile(characters_to_draw[i], false)
     end
   end
 
-  for i = 1, count(static_tiles_to_draw) do
-    draw_tile(static_tiles_to_draw[i], false)
-  end
-
-  for i = 1, count(characters_to_draw) do
-    draw_tile(characters_to_draw[i], false)
-  end
 
 end
 

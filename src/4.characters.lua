@@ -1,17 +1,12 @@
 function add_char_to_list(char_type, char_list, x_origin, y_origin)
-  tile_to_prep = create_player()
-  if char_type == "goal" then
+  if char_type == "player" then
+    tile_to_prep = create_player()
+  elseif char_type == "goal" then
     tile_to_prep = create_goal()
   end
 
-  add(
-  char_list,
-  create_drawable_tile(
-  tile_to_prep,
-  x_origin, y_origin
-  )
-  )
-  end
+  add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
+end
 
 function get_starting_waypoint(char, waypoints)
   for i=1, count(waypoints) do

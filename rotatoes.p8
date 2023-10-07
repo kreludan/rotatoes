@@ -6,11 +6,14 @@ function _init()
   cls()
   max_distance = 7
   controlled_tile = 1
+  level_state = "playing"
   rotators_to_draw = {}
   static_tiles_to_draw = {}
   characters_to_draw = {}
   waypoints = {}
-  player = {}
+  level_player = {}
+  level_goal = {}
+  level_enemies = {}
   _init_rotators()
   _init_static_tiles()
   _init_characters()
@@ -36,7 +39,9 @@ function _init_character_details()
   for i=1,count(characters_to_draw) do
     characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
     if characters_to_draw[i].char_type == "player" then
-      player = characters_to_draw[i]
+      level_player = characters_to_draw[i]
+    elseif characters_to_draw[i].char_type == "goal" then
+      level_goal = characters_to_draw[i]
     end
   end
 end
@@ -69,7 +74,7 @@ function _init_static_tiles()
     { "corrend_right", 51, 63 },
     { "corrend_left", 75, 63 },
     { "corr_horiz", 82, 63 },
-    { "corr_horiz", 89, 63 },
+    { "corrend_right", 89, 63 },
     { "corrend_right", 96, 63 }
   }
 
@@ -104,11 +109,24 @@ function _init_waypoints()
 end
 
 function _update()
-  _handleinputs()
-  _handlerots()
-  _handlerotends()
-  _handlecharmovement()
+  if(level_state == "playing") then
+    _handleinputs()
+    _handlerots()
+    _handlerotends()
+    _handlecharmovement()
+    _handlecharcollisions()
+  end
 end
+
+function _handlecharcollisions()
+  for i=1, count(level_player.draw_points) do
+    if level_player.draw_points[i].x == level_goal.draw_points[i].x and
+    level_player.draw_points[i].y == level_goal.center_y then
+      level_state = "win"
+    end
+  end
+end
+
 
 function _handlecharmovement()
   for i = 1, count(characters_to_draw) do
@@ -182,22 +200,26 @@ end
 function _draw()
   cls()
   _draw_ui_elements()
+  if level_state == "win" then
+    print("you win :0", 2, 2)
+  elseif level_state == "playing" then
+    for i = 1, count(rotators_to_draw) do
+      if i == controlled_tile then
+        draw_tile(rotators_to_draw[i], true)
+      else
+        draw_tile(rotators_to_draw[i], false)
+      end
+    end
 
-  for i = 1, count(rotators_to_draw) do
-    if i == controlled_tile then
-      draw_tile(rotators_to_draw[i], true)
-    else
-      draw_tile(rotators_to_draw[i], false)
+    for i = 1, count(static_tiles_to_draw) do
+      draw_tile(static_tiles_to_draw[i], false)
+    end
+
+    for i = 1, count(characters_to_draw) do
+      draw_tile(characters_to_draw[i], false)
     end
   end
 
-  for i = 1, count(static_tiles_to_draw) do
-    draw_tile(static_tiles_to_draw[i], false)
-  end
-
-  for i = 1, count(characters_to_draw) do
-    draw_tile(characters_to_draw[i], false)
-  end
 
 end
 
@@ -832,19 +854,14 @@ end
 -->8
 --characters
 function add_char_to_list(char_type, char_list, x_origin, y_origin)
-  tile_to_prep = create_player()
-  if char_type == "goal" then
+  if char_type == "player" then
+    tile_to_prep = create_player()
+  elseif char_type == "goal" then
     tile_to_prep = create_goal()
   end
 
-  add(
-  char_list,
-  create_drawable_tile(
-  tile_to_prep,
-  x_origin, y_origin
-  )
-  )
-  end
+  add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
+end
 
 function get_starting_waypoint(char, waypoints)
   for i=1, count(waypoints) do
@@ -1169,11 +1186,11 @@ __gfx__
 080000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667665055555550555555505667665
 888000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000111d1110000000000000000000000111d11100000555d555056676650333d33305555555
-00800000222d2220000000000222d22222222222d222222d22222222222d22222222222d2222222200000222d2220000056676650566766503bbabb305888885
-888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbdbb305888885
-008000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee2000005667665056676650dadadad05888885
-000000002ee7ee200000000002ee7ee2d7777777777dd7777777777d2ee7ee2d777777777777777d000002ee7ee20000056676650566766503bbdbb305888885
+00800000222d2220000000000222d22222222222d222222d22222222222d22222222222d2222222200000222d2220000056676650566766503bbbbb305888885
 888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbabb305888885
+008000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee2000005667665056676650dbaaabd05888885
+000000002ee7ee200000000002ee7ee2d7777777777dd7777777777d2ee7ee2d777777777777777d000002ee7ee20000056676650566766503bbabb305888885
+888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbbbb305888885
 080000002ee7ee222222222222ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2222222ee7ee22222256676650555d5550333d33305555555
 080000002ee7eeeeeee22eeeeeee7ee2222222ee7ee22ee7ee2222222ee7ee222222222d222222222eeeeeee7eeeeeee20000000000000000000000000000000
 000000002ee7eeeeeee22eeeeeee7ee5000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee20000000000000000000000000000000
@@ -1186,3 +1203,4 @@ __gfx__
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
+
