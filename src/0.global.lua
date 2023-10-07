@@ -1,8 +1,13 @@
 function _init()
-  cls()
   max_distance = 7 -- distance to check for a waypoint in a direction
+  level_state = "menu" -- "playing", "win", "lose", "menu"
+  level_num = 1 -- current level
+end
+
+function _init_level()
+  cls()
+  level_state = "playing"
   controlled_tile = 1 -- denotes the tile currently controlled on scene
-  level_state = "playing" -- "playing", "win", "lose", "menu"
   rotators_to_draw = {} -- holds all rotating tiles
   static_tiles_to_draw = {} -- holds all non-rotating tiles
   characters_to_draw = {} -- holds all 'characters' (incl. goal and death tiles)
@@ -108,10 +113,12 @@ end
 
 function _update()
   _handleinputs()
-  _handlerots()
-  _handlerotends()
-  _handlecharmovement()
-  _handlecharcollisions()
+  if level_state == "playing" then
+    _handlerots()
+    _handlerotends()
+    _handlecharmovement()
+    _handlecharcollisions()
+  end
 end
 
 function _handlecharcollisions()
@@ -119,6 +126,7 @@ function _handlecharcollisions()
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
       level_state = "win"
+      level_num += 1
     end
 
     for j=1, count(level_enemies) do
@@ -142,9 +150,18 @@ function _handlecharmovement()
 end
 
 function _handleinputs()
-  if btnp(❎) then
-    _init()
+  if level_state == "menu" then
+    handle_menu_input()
+  else
+    if btnp(❎) then
+      _init_level()
+    else
+      handle_playing_input()
+    end
   end
+end
+
+function handle_playing_input()
   if btnp(⬆️) then
     if controlled_tile
         == count(rotators_to_draw) then
@@ -206,11 +223,15 @@ end
 function _draw()
   cls()
   _draw_ui_elements()
-  if level_state == "win" then
-    print("you win :0", 2, 2)
+  
+  if level_state == "menu" then
+    generate_main_menu()
+  elseif level_state == "win" then
+    generate_win_menu()
   elseif level_state == "lose" then
-    print("you lose ):", 2, 2)
+    generate_lose_menu()
   elseif level_state == "playing" then
+    print("level " .. tostring(level_num), 4, 4)
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
         draw_tile(rotators_to_draw[i], true)
