@@ -7,12 +7,14 @@ function _init()
   system_init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
+  in_game_menu_option = -1
   level_num = 1 -- current level
 end
 
 function _init_level(level_num)
   cls()
   level_state = "playing"
+  in_game_menu_option = -1
   controlled_tile = 1 -- denotes the tile currently controlled on scene
   rotators_to_draw = {} -- holds all rotating tiles
   static_tiles_to_draw = {} -- holds all non-rotating tiles
@@ -109,6 +111,7 @@ function _handlecharcollisions()
   for i=1, count(level_player.draw_points) do
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
+      in_game_menu_option = 1
       level_state = "win"
       level_num = min(count(level_blueprints), level_num + 1)
     end
@@ -116,6 +119,7 @@ function _handlecharcollisions()
     for j=1, count(level_enemies) do
       if level_player.draw_points[i].x == level_enemies[j].center_x and
       level_player.draw_points[i].y == level_enemies[j].center_y then
+        in_game_menu_option = 1
         level_state = "lose"
       end
     end
@@ -136,12 +140,10 @@ end
 function _handleinputs()
   if level_state == "menu" then
     handle_menu_input()
-  elseif level_state=="win" or level_state=="lose" then
-    if btnp(🅾️) then
-  _init_level(level_num)
-  elseif btnp(❎) then
-    generate_main_menu()
-    end
+  elseif level_state=="win" then
+    handle_win_menu_input()
+  elseif level_state=="lose" then
+    handle_lose_menu_input()
   else
     handle_playing_input()
   end
@@ -212,9 +214,9 @@ function _draw()
   if level_state == "menu" then
     generate_main_menu()
   elseif level_state == "win" then
-    generate_win_menu()
+    generate_win_menu(in_game_menu_option)
   elseif level_state == "lose" then
-    generate_lose_menu()
+    generate_lose_menu(in_game_menu_option)
   elseif level_state == "playing" then
     cls()
     _draw_ui_elements()
@@ -1209,24 +1211,63 @@ function handle_menu_input()
   end
 end
 
-function generate_win_menu()
-  rectfill(36, 35, 92, 65, 0)
-  rect(36, 35, 92, 65, 7)
-  print("complete :0", 42, 39, 11)
-  print("next lvl:[ ]", 41, 47, 7)
-  print("main menu:[ ]", 39, 55, 7)
-  print("z", 81, 47, 11)
-  print("x", 83, 55, 8)
+function handle_win_menu_input()
+  if btnp(⬆️) then
+    in_game_menu_option = max(1, in_game_menu_option-1)
+  elseif btnp(⬇️) then
+    in_game_menu_option = min(3, in_game_menu_option+1)
+  elseif btnp(❎) or btnp(🅾️) then
+    if in_game_menu_option == 1 then
+      _init_level(level_num)
+    elseif in_game_menu_option == 2 then
+      level_num -= 1
+      _init_level(level_num)
+    else
+      generate_main_menu()
+    end
+  end
 end
 
-function generate_lose_menu()
-  rectfill(36, 35, 92, 65, 0)
-  rect(36, 35, 92, 65, 7)
+function generate_win_menu(option_selected)
+  rectfill(26, 35, 99, 75, 0)
+  rect(26, 35, 99, 75, 7)
+  print("complete :0", 42, 39, 11)
+  y_locations = {47, 55, 63}
+  option_text = {"next level", "replay lvl", "main menu"}
+  for i=1,3 do
+    print("[", 35, y_locations[i], 7)
+    print("]", 41, y_locations[i], 7)
+    print(option_text[i], 48, y_locations[i], 7)
+  end
+  print("x", 38, y_locations[option_selected], 12)
+end
+
+function handle_lose_menu_input()
+  if btnp(⬆️) then
+    in_game_menu_option = 1
+  elseif btnp(⬇️) then
+    in_game_menu_option = 2
+  elseif btnp(❎) or btnp(🅾️) then
+    if in_game_menu_option == 1 then
+      _init_level(level_num)
+    else
+      generate_main_menu()
+    end
+  end
+end
+
+function generate_lose_menu(option_selected)
+  rectfill(26, 35, 99, 65, 0)
+  rect(26, 35, 99, 65, 7)
   print("lose :(", 51, 39, 8)
-  print("restart:[ ]", 43, 47, 7)
-  print("main menu:[ ]", 39, 55, 7)
-  print("z", 79, 47, 11)
-  print("x", 83, 55, 8)
+  y_locations = {47, 55}
+  option_text = {"replay lvl", "main menu"}
+  for i=1,2 do
+    print("[", 35, y_locations[i], 7)
+    print("]", 41, y_locations[i], 7)
+    print(option_text[i], 48, y_locations[i], 7)
+  end
+  print("x", 38, y_locations[option_selected], 12)
 end
 -->8
 --levels
@@ -1277,7 +1318,159 @@ level_blueprints = {
          { "singleton_vert", 76, 32},
          { "singleton_horiz", 88, 51},
          { "singleton_horiz", 95, 51}
-     }}
+     }},
+    {level_num = 4,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 1,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 5,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 6,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 7,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 8,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 9,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 10,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
 }
 
 function draw_level_text()
@@ -1373,3 +1566,4 @@ d666d1ccc1eeeee228882999994bbbb34fff466d0000000000000000000000000000000000000000
 60060c000c00e00080008009000b000bf00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 60006c000c00e00080008009000b000bf00060006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 d000d1ccc1002000200020040003bbb34fff4d660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+

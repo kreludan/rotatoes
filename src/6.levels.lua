@@ -45,7 +45,159 @@ level_blueprints = {
          { "singleton_vert", 76, 32},
          { "singleton_horiz", 88, 51},
          { "singleton_horiz", 95, 51}
-     }}
+     }},
+    {level_num = 4,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 1,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 5,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 6,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 7,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 8,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 9,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 10,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
 }
 
 function draw_level_text()

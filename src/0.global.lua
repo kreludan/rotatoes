@@ -3,12 +3,14 @@ function _init()
   system_init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
+  in_game_menu_option = -1
   level_num = 1 -- current level
 end
 
 function _init_level(level_num)
   cls()
   level_state = "playing"
+  in_game_menu_option = -1
   controlled_tile = 1 -- denotes the tile currently controlled on scene
   rotators_to_draw = {} -- holds all rotating tiles
   static_tiles_to_draw = {} -- holds all non-rotating tiles
@@ -105,6 +107,7 @@ function _handlecharcollisions()
   for i=1, count(level_player.draw_points) do
     if level_player.draw_points[i].x == level_goal.center_x and
     level_player.draw_points[i].y == level_goal.center_y then
+      in_game_menu_option = 1
       level_state = "win"
       level_num = min(count(level_blueprints), level_num + 1)
     end
@@ -112,6 +115,7 @@ function _handlecharcollisions()
     for j=1, count(level_enemies) do
       if level_player.draw_points[i].x == level_enemies[j].center_x and
       level_player.draw_points[i].y == level_enemies[j].center_y then
+        in_game_menu_option = 1
         level_state = "lose"
       end
     end
@@ -132,12 +136,10 @@ end
 function _handleinputs()
   if level_state == "menu" then
     handle_menu_input()
-  elseif level_state=="win" or level_state=="lose" then
-    if btnp(🅾️) then
-  _init_level(level_num)
-  elseif btnp(❎) then
-    generate_main_menu()
-    end
+  elseif level_state=="win" then
+    handle_win_menu_input()
+  elseif level_state=="lose" then
+    handle_lose_menu_input()
   else
     handle_playing_input()
   end
@@ -208,9 +210,9 @@ function _draw()
   if level_state == "menu" then
     generate_main_menu()
   elseif level_state == "win" then
-    generate_win_menu()
+    generate_win_menu(in_game_menu_option)
   elseif level_state == "lose" then
-    generate_lose_menu()
+    generate_lose_menu(in_game_menu_option)
   elseif level_state == "playing" then
     cls()
     _draw_ui_elements()

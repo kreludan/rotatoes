@@ -13,22 +13,61 @@ function handle_menu_input()
   end
 end
 
-function generate_win_menu()
-  rectfill(36, 35, 92, 65, 0)
-  rect(36, 35, 92, 65, 7)
-  print("complete :0", 42, 39, 11)
-  print("next lvl:[ ]", 41, 47, 7)
-  print("main menu:[ ]", 39, 55, 7)
-  print("z", 81, 47, 11)
-  print("x", 83, 55, 8)
+function handle_win_menu_input()
+  if btnp(⬆️) then
+    in_game_menu_option = max(1, in_game_menu_option-1)
+  elseif btnp(⬇️) then
+    in_game_menu_option = min(3, in_game_menu_option+1)
+  elseif btnp(❎) or btnp(🅾️) then
+    if in_game_menu_option == 1 then
+      _init_level(level_num)
+    elseif in_game_menu_option == 2 then
+      level_num -= 1
+      _init_level(level_num)
+    else
+      generate_main_menu()
+    end
+  end
 end
 
-function generate_lose_menu()
-  rectfill(36, 35, 92, 65, 0)
-  rect(36, 35, 92, 65, 7)
+function generate_win_menu(option_selected)
+  rectfill(26, 35, 99, 75, 0)
+  rect(26, 35, 99, 75, 7)
+  print("complete :0", 42, 39, 11)
+  y_locations = {47, 55, 63}
+  option_text = {"next level", "replay lvl", "main menu"}
+  for i=1,3 do
+    print("[", 35, y_locations[i], 7)
+    print("]", 41, y_locations[i], 7)
+    print(option_text[i], 48, y_locations[i], 7)
+  end
+  print("x", 38, y_locations[option_selected], 12)
+end
+
+function handle_lose_menu_input()
+  if btnp(⬆️) then
+    in_game_menu_option = 1
+  elseif btnp(⬇️) then
+    in_game_menu_option = 2
+  elseif btnp(❎) or btnp(🅾️) then
+    if in_game_menu_option == 1 then
+      _init_level(level_num)
+    else
+      generate_main_menu()
+    end
+  end
+end
+
+function generate_lose_menu(option_selected)
+  rectfill(26, 35, 99, 65, 0)
+  rect(26, 35, 99, 65, 7)
   print("lose :(", 51, 39, 8)
-  print("restart:[ ]", 43, 47, 7)
-  print("main menu:[ ]", 39, 55, 7)
-  print("z", 79, 47, 11)
-  print("x", 83, 55, 8)
+  y_locations = {47, 55}
+  option_text = {"replay lvl", "main menu"}
+  for i=1,2 do
+    print("[", 35, y_locations[i], 7)
+    print("]", 41, y_locations[i], 7)
+    print(option_text[i], 48, y_locations[i], 7)
+  end
+  print("x", 38, y_locations[option_selected], 12)
 end
