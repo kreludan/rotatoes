@@ -1,9 +1,10 @@
 function generate_main_menu()
   cls()
+  _draw_ui_elements()
   level_state = "menu"
   level_num = 1
-  print("rotatoes", 48, 20, 7)
-  print("[z]:play", 33, 40, 7)
+  sspr(0, 37, 41, 10, 44, 30)
+  print("[z]:play", 33, 45, 7)
 end
 
 function handle_menu_input()
