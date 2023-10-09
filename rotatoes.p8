@@ -5,7 +5,7 @@ __lua__
 function _init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
-  level_num = 3 -- current level
+  level_num = 1 -- current level
 end
 
 function _init_level(level_num)
