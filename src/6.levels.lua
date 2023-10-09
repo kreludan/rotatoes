@@ -65,3 +65,15 @@ level_blueprints = {
          { "singleton_horiz", 95, 51}
      }}
 }
+
+function draw_level_text()
+    if level_num == 1 then
+        sspr(0, 16, 8, 5, 54, 38)
+        sspr(0, 24, 8, 5, 65, 38)
+        print("rotate", 52, 45)
+    elseif level_num == 2 then
+        sspr(0, 30, 5, 7, 57, 36)
+        sspr(6, 30, 5, 7, 65, 36)
+        print("tileswap", 48, 45)
+    end
+end

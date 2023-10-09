@@ -1,20 +1,33 @@
 function generate_main_menu()
-  print("rotatoes", 48, 20)
-  print("press ❎ to play", 33, 40)
+  cls()
+  level_state = "menu"
+  level_num = 1
+  print("rotatoes", 48, 20, 7)
+  print("[z]:play", 33, 40, 7)
 end
 
 function handle_menu_input()
-  if btnp(❎) then
+  if btnp(🅾️) then
     _init_level(level_num)
   end
 end
 
 function generate_win_menu()
-  print("you win :0", 45, 20)
-  print("press ❎ to go to next level", 10, 40)
+  rectfill(36, 35, 92, 65, 0)
+  rect(36, 35, 92, 65, 7)
+  print("complete :0", 42, 39, 11)
+  print("next lvl:[ ]", 41, 47, 7)
+  print("main menu:[ ]", 39, 55, 7)
+  print("z", 81, 47, 11)
+  print("x", 83, 55, 8)
 end
 
 function generate_lose_menu()
-  print("you lose :(", 44, 20)
-  print("press ❎ to restart", 28, 40)
+  rectfill(36, 35, 92, 65, 0)
+  rect(36, 35, 92, 65, 7)
+  print("lose :(", 51, 39, 8)
+  print("restart:[ ]", 43, 47, 7)
+  print("main menu:[ ]", 39, 55, 7)
+  print("z", 79, 47, 11)
+  print("x", 83, 55, 8)
 end

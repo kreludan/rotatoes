@@ -130,24 +130,26 @@ end
 function _handleinputs()
   if level_state == "menu" then
     handle_menu_input()
-  else
-    if btnp(❎) then
-      _init_level(level_num)
-    else
-      handle_playing_input()
+  elseif level_state=="win" or level_state=="lose" then
+    if btnp(🅾️) then
+  _init_level(level_num)
+  elseif btnp(❎) then
+    generate_main_menu()
     end
+  else
+    handle_playing_input()
   end
 end
 
 function handle_playing_input()
-  if btnp(⬆️) then
+  if btnp(🅾️) then
     if controlled_tile
         == count(rotators_to_draw) then
       controlled_tile = 1
     else
       controlled_tile += 1
     end
-  elseif btnp(⬇️) then
+  elseif btnp(❎) then
     if controlled_tile == 1 then
       controlled_tile = count(rotators_to_draw)
     else
@@ -155,11 +157,11 @@ function handle_playing_input()
     end
   end
 
-  if btnp(0) or btnp(1) then
+  if btnp(⬅️) or btnp(➡️) then
     i = controlled_tile
     if rotators_to_draw[i].rotating
         == false then
-      local rotatedir = btnp(0) and 1 or -1
+      local rotatedir = btnp(⬅️) and 1 or -1
       rotators_to_draw[i] = set_rotating(rotators_to_draw[i], rotatedir)
       for j = 1, count(characters_to_draw) do
         if characters_to_draw[j].tile_on == rotators_to_draw[i] then
@@ -199,9 +201,7 @@ function _handlerotends()
 end
 
 function _draw()
-  cls()
   _draw_ui_elements()
-  
   if level_state == "menu" then
     generate_main_menu()
   elseif level_state == "win" then
@@ -209,7 +209,10 @@ function _draw()
   elseif level_state == "lose" then
     generate_lose_menu()
   elseif level_state == "playing" then
-    print(tostring(level_num), 4, 4)
+    cls()
+    _draw_ui_elements()
+    print(tostring(level_num), 4, 4, 7)
+    draw_level_text()
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
         draw_tile(rotators_to_draw[i], true)
