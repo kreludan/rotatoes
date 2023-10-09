@@ -2,7 +2,9 @@ pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
 --global
+
 function _init()
+  system_init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
   level_num = 1 -- current level
@@ -205,6 +207,7 @@ function _handlerotends()
 end
 
 function _draw()
+  adjust_for_colorblindness()
   _draw_ui_elements()
   if level_state == "menu" then
     generate_main_menu()
@@ -1229,24 +1232,6 @@ end
 level_blueprints = {
     {level_num = 1,
      character_blueprint = {
-         {"goal", 96, 63},
-         {"player", 30, 63}
-     },
-     rotator_blueprint = {
-         { "vert", 63, 63 },
-     },
-     static_tile_blueprint = {
-         { "corrend_left", 30, 63 },
-         { "corr_horiz", 37, 63 },
-         { "corr_horiz", 44, 63 },
-         { "corrend_right", 51, 63 },
-         { "corrend_left", 75, 63 },
-         { "corr_horiz", 82, 63 },
-         { "corrend_right", 89, 63 },
-         { "corrend_right", 96, 63 },
-     }},
-    {level_num = 2,
-     character_blueprint = {
          {"goal", 104, 63 },
          {"player", 22, 63 },
      },
@@ -1264,7 +1249,7 @@ level_blueprints = {
          { "corrend_right", 97, 63 },
          { "corrend_right", 104, 63 }
      }},
-    {level_num = 3,
+    {level_num = 2,
      character_blueprint = {
          {"deathtile", 76, 70 },
          {"deathtile", 76, 32 },
@@ -1296,14 +1281,48 @@ level_blueprints = {
 
 function draw_level_text()
     if level_num == 1 then
-        sspr(0, 16, 8, 5, 54, 38)
-        sspr(0, 24, 8, 5, 65, 38)
-        print("rotate", 52, 45)
-    elseif level_num == 2 then
-        sspr(0, 30, 5, 7, 57, 36)
-        sspr(6, 30, 5, 7, 65, 36)
-        print("tileswap", 48, 45)
+        sspr(0, 16, 8, 5, 39, 37)
+        sspr(0, 24, 8, 5, 50, 37)
+        print("rotate", 38, 45)
+        sspr(0, 30, 5, 7, 72, 36)
+        sspr(6, 30, 5, 7, 80, 36)
+        print("swap", 71, 45)
     end
+end
+-->8
+--colorblind_mode
+local system
+
+function system_init()
+    system = {
+        settings = {
+            colorblind = "off" --off, on
+        },
+        toggle_colorblind_mode = function(self)
+            if (self.settings.colorblind == "off") then
+                self.settings.colorblind = "on"
+            else
+                self.settings.colorblind = "off"
+            end
+        end
+    }
+    function menuitem_colorblind(b)
+        if (b&112 > 0) then
+            system:toggle_colorblind_mode()
+            menuitem(_, "colorblind: "..system.settings.colorblind)
+        end
+        return true -- stay open
+    end
+    menuitem(1, "colorblind: "..system.settings.colorblind, menuitem_colorblind)
+end
+
+function adjust_for_colorblindness()
+    if (system.settings.colorblind == "off") then
+        pal()
+    elseif (system.settings.colorblind == "on") then
+        pal({[3]=13, [8]=9, [9]=6, [10]=15, [11]=12, [13]=5, [14]=15}, 0)
+    end
+    map()
 end
 __gfx__
 00600000111d1110000000000111d11111111111d111111d11111111111d11111111111d1111111100000111d111000005555555055555550566766505555555
@@ -1337,9 +1356,10 @@ __gfx__
 00000900222d2222222222222222d22200000222d222222d222000002ee7ee200000000000000000222222ee7ee2222225666665056676650000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000005666665056676650000000000000000
 3bbb30200020000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee20000055555550555d5550000000000000000
-b000b0800080000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
+0000b0800080000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000b00080800000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00b00000800000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
 0b000008080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-b000b080008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+b0000080008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3bbb3020002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+

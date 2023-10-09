@@ -1,24 +1,6 @@
 level_blueprints = {
     {level_num = 1,
      character_blueprint = {
-         {"goal", 96, 63},
-         {"player", 30, 63}
-     },
-     rotator_blueprint = {
-         { "vert", 63, 63 },
-     },
-     static_tile_blueprint = {
-         { "corrend_left", 30, 63 },
-         { "corr_horiz", 37, 63 },
-         { "corr_horiz", 44, 63 },
-         { "corrend_right", 51, 63 },
-         { "corrend_left", 75, 63 },
-         { "corr_horiz", 82, 63 },
-         { "corrend_right", 89, 63 },
-         { "corrend_right", 96, 63 },
-     }},
-    {level_num = 2,
-     character_blueprint = {
          {"goal", 104, 63 },
          {"player", 22, 63 },
      },
@@ -36,7 +18,7 @@ level_blueprints = {
          { "corrend_right", 97, 63 },
          { "corrend_right", 104, 63 }
      }},
-    {level_num = 3,
+    {level_num = 2,
      character_blueprint = {
          {"deathtile", 76, 70 },
          {"deathtile", 76, 32 },
@@ -68,12 +50,11 @@ level_blueprints = {
 
 function draw_level_text()
     if level_num == 1 then
-        sspr(0, 16, 8, 5, 54, 38)
-        sspr(0, 24, 8, 5, 65, 38)
-        print("rotate", 52, 45)
-    elseif level_num == 2 then
-        sspr(0, 30, 5, 7, 57, 36)
-        sspr(6, 30, 5, 7, 65, 36)
-        print("tileswap", 48, 45)
+        sspr(0, 16, 8, 5, 39, 37)
+        sspr(0, 24, 8, 5, 50, 37)
+        print("rotate", 38, 45)
+        sspr(0, 30, 5, 7, 72, 36)
+        sspr(6, 30, 5, 7, 80, 36)
+        print("swap", 71, 45)
     end
 end

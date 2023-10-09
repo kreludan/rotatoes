@@ -1,4 +1,6 @@
+
 function _init()
+  system_init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
   level_num = 1 -- current level
@@ -201,6 +203,7 @@ function _handlerotends()
 end
 
 function _draw()
+  adjust_for_colorblindness()
   _draw_ui_elements()
   if level_state == "menu" then
     generate_main_menu()
