@@ -5,7 +5,7 @@ __lua__
 function _init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
-  level_num = 1 -- current level
+  level_num = 3 -- current level
 end
 
 function _init_level(level_num)
@@ -213,7 +213,7 @@ function _draw()
   elseif level_state == "lose" then
     generate_lose_menu()
   elseif level_state == "playing" then
-    print("level " .. tostring(level_num), 4, 4)
+    print(tostring(level_num), 4, 4)
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
         draw_tile(rotators_to_draw[i], true)
@@ -812,7 +812,9 @@ function add_static_tile_to_list(statictile_type, statictile_list, x_origin, y_o
     { "corr_turn_upleft", 97, 8 },
     { "corr_turn_upright", 121, 8 },
     { "corr_turn_downleft", 105, 8 },
-    { "corr_turn_downright", 113, 8 }
+    { "corr_turn_downright", 113, 8 },
+    { "singleton_horiz", 97, 24 },
+    { "singleton_vert", 105, 24 }
   }
   tile_to_prep = {}
   while tileindex != count(tile_types) do
@@ -1229,23 +1231,50 @@ level_blueprints = {
      }},
     {level_num = 2,
      character_blueprint = {
-         {"goal", 96, 63},
-         {"player", 30, 63},
-         {"deathtile", 63, 75}
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
      },
      rotator_blueprint = {
-         { "vert", 63, 63 }
+         { "vert", 48, 63 },
+         { "vert", 78, 63 }
      },
      static_tile_blueprint = {
-         { "corrend_left", 30, 63 },
-         { "corr_horiz", 37, 63 },
-         { "corr_horiz", 44, 63 },
-         { "corrend_right", 51, 63 },
-         { "corrend_left", 75, 63 },
-         { "corr_horiz", 82, 63 },
-         { "corrend_right", 89, 63 },
-         { "corrend_right", 96, 63 },
-         { "corr_horiz", 63, 75}
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+    {level_num = 3,
+     character_blueprint = {
+         {"deathtile", 76, 70 },
+         {"deathtile", 76, 32 },
+         {"deathtile", 57, 89},
+         {"goal", 95, 51},
+         {"player", 31, 70 }
+     },
+     rotator_blueprint = {
+         { "vert", 57, 70 },
+         { "l2", 76, 51 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 31, 70 },
+         { "corr_horiz", 38, 70 },
+         { "corrend_right", 45, 70 },
+         { "singleton_horiz", 69, 70 },
+         { "singleton_horiz", 76, 70 },
+         { "singleton_vert", 57, 82},
+         { "singleton_vert", 57, 89},
+         { "corrend_down", 57, 58},
+         { "corr_turn_upleft", 57, 51 },
+         { "corrend_right", 64, 51 },
+         { "singleton_vert", 76, 39 },
+         { "singleton_vert", 76, 32},
+         { "singleton_horiz", 88, 51},
+         { "singleton_horiz", 95, 51}
      }}
 }
 __gfx__
@@ -1273,13 +1302,13 @@ __gfx__
 888000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bb6bb302886882
 080000002ee7ee222222222222ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2222222ee7ee22222256676650555d5550333d3330222d222
 080000002ee7eeeeeee22eeeeeee7ee2222222ee7ee22ee7ee2222222ee7ee222222222d222222222eeeeeee7eeeeeee20000000000000000000000000000000
-000000002ee7eeeeeee22eeeeeee7ee5000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee20000000000000000000000000000000
-00000000d7777777777dd7777777777d000002ee7ee22ee7ee200000d77777d00000000000000000d777777777777777d0000000000000000000000000000000
-000000002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee20000000000000000000000000000000
-000000002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee20000000000000000000000000000000
-00000000222d2222222222222222d22200000222d222222d222000002ee7ee200000000000000000222222ee7ee2222220000000000000000000000000000000
-000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
-000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
+000000002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee255555550555d5550000000000000000
+00000000d7777777777dd7777777777d000002ee7ee22ee7ee200000d77777d00000000000000000d777777777777777d5666665056676650000000000000000
+000000002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee25666665056676650000000000000000
+000000002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee2d77777d056676650000000000000000
+00000000222d2222222222222222d22200000222d222222d222000002ee7ee200000000000000000222222ee7ee2222225666665056676650000000000000000
+000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000005666665056676650000000000000000
+000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee20000055555550555d5550000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000

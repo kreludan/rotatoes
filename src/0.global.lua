@@ -1,7 +1,7 @@
 function _init()
   max_distance = 7 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu"
-  level_num = 1 -- current level
+  level_num = 3 -- current level
 end
 
 function _init_level(level_num)
@@ -209,7 +209,7 @@ function _draw()
   elseif level_state == "lose" then
     generate_lose_menu()
   elseif level_state == "playing" then
-    print("level " .. tostring(level_num), 4, 4)
+    print(tostring(level_num), 4, 4)
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
         draw_tile(rotators_to_draw[i], true)
