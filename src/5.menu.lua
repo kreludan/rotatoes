@@ -3,9 +3,9 @@ function generate_main_menu(option_selected)
   cls()
   _draw_ui_elements()
   sspr(0, 37, 41, 10, 44, 30)
-  y_locations = {45, 53}
-  descriptions = {"new game", "level select"}
-  x_colors = {14, 15}
+  y_locations = {45, 53, 61}
+  descriptions = {"new game", "level select", "settings"}
+  x_colors = {14, 8, 2}
   for i=1,count(descriptions) do
     print("[", 36, y_locations[i], 7)
     print("]", 42, y_locations[i], 7)
@@ -22,9 +22,9 @@ end
 
 function handle_menu_input()
   if btnp(⬆️) then
-    main_menu_option = 1
+    main_menu_option = max(1, main_menu_option-1)
   elseif btnp(⬇️) then
-    main_menu_option = 2
+    main_menu_option = min(3, main_menu_option+1)
   elseif btnp(❎) or btnp(🅾️) then
     if main_menu_option == 1 then
       _init_level(level_num)

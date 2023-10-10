@@ -7,6 +7,7 @@ function _init()
   in_game_menu_option = -1
   main_menu_option = 1
   level_select_option = 1
+  global_game_speed = 1
   level_num = 1 -- current level
   furthest_level_unlocked = get_furthest_level()
 end

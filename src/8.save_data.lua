@@ -8,3 +8,5 @@ function update_furthest_level(level_number)
         dset(0, level_number)
     end
 end
+
+-- settings: (1) colorblind mode (2) game speed (3) clear save [clear furthest level]

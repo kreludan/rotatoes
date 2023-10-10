@@ -261,7 +261,7 @@ function turn_180_degrees(char)
 end
 
 function move_character(char)
-  char_speed = char.char_speed
+  char_speed = char.char_speed * global_game_speed
   if char.movement_dir == "right" then
     return translate_tile(char, char_speed, 0)
   elseif char.movement_dir == "left" then
