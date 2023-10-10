@@ -1,15 +1,37 @@
-function generate_main_menu()
+
+function generate_main_menu(option_selected)
   cls()
   _draw_ui_elements()
-  level_state = "menu"
-  level_num = 1
   sspr(0, 37, 41, 10, 44, 30)
-  print("[z]:play", 33, 45, 7)
+  y_locations = {45, 53}
+  descriptions = {"new game", "level select"}
+  x_colors = {14, 15}
+  for i=1,count(descriptions) do
+    print("[", 36, y_locations[i], 7)
+    print("]", 42, y_locations[i], 7)
+    print(descriptions[i], 49, y_locations[i], 7)
+  end
+  print("x", 39, y_locations[option_selected], x_colors[option_selected])
+end
+
+function init_main_menu()
+  level_num = 1
+  main_menu_option = 1
+  level_state = "menu"
 end
 
 function handle_menu_input()
-  if btnp(🅾️) then
-    _init_level(level_num)
+  if btnp(⬆️) then
+    main_menu_option = 1
+  elseif btnp(⬇️) then
+    main_menu_option = 2
+  elseif btnp(❎) or btnp(🅾️) then
+    if main_menu_option == 1 then
+      _init_level(level_num)
+    else
+      level_select_option = 1
+      level_state = "level_select"
+    end
   end
 end
 
@@ -25,7 +47,7 @@ function handle_win_menu_input()
       level_num -= 1
       _init_level(level_num)
     else
-      generate_main_menu()
+      init_main_menu()
     end
   end
 end
@@ -35,13 +57,14 @@ function generate_win_menu(option_selected)
   rect(26, 35, 99, 75, 7)
   print("complete :0", 42, 39, 11)
   y_locations = {47, 55, 63}
-  option_text = {"next level", "replay lvl", "main menu"}
+  option_text = {"next level", "replay level", "main menu"}
+  x_colors = {11, 12, 8}
   for i=1,3 do
     print("[", 35, y_locations[i], 7)
     print("]", 41, y_locations[i], 7)
     print(option_text[i], 48, y_locations[i], 7)
   end
-  print("x", 38, y_locations[option_selected], 12)
+  print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
 
 function handle_lose_menu_input()
@@ -53,7 +76,7 @@ function handle_lose_menu_input()
     if in_game_menu_option == 1 then
       _init_level(level_num)
     else
-      generate_main_menu()
+      init_main_menu()
     end
   end
 end
@@ -64,10 +87,11 @@ function generate_lose_menu(option_selected)
   print("lose :(", 51, 39, 8)
   y_locations = {47, 55}
   option_text = {"replay lvl", "main menu"}
+  x_colors = {12, 8}
   for i=1,2 do
     print("[", 35, y_locations[i], 7)
     print("]", 41, y_locations[i], 7)
     print(option_text[i], 48, y_locations[i], 7)
   end
-  print("x", 38, y_locations[option_selected], 12)
+  print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end

@@ -5,13 +5,18 @@ __lua__
 
 function _init()
   system_init()
+  cartdata("rotato_save")
   max_distance = 7 -- distance to check for a waypoint in a direction
-  level_state = "menu" -- "playing", "win", "lose", "menu"
+  level_state = "menu" -- "playing", "win", "lose", "menu", "level_select"
   in_game_menu_option = -1
+  main_menu_option = 1
+  level_select_option = 1
   level_num = 1 -- current level
+  furthest_level_unlocked = get_furthest_level()
 end
 
 function _init_level(level_num)
+  update_furthest_level(level_num)
   cls()
   level_state = "playing"
   in_game_menu_option = -1
@@ -140,6 +145,8 @@ end
 function _handleinputs()
   if level_state == "menu" then
     handle_menu_input()
+  elseif level_state == "level_select" then
+    handle_level_select_input()
   elseif level_state=="win" then
     handle_win_menu_input()
   elseif level_state=="lose" then
@@ -212,7 +219,9 @@ function _draw()
   adjust_for_colorblindness()
   _draw_ui_elements()
   if level_state == "menu" then
-    generate_main_menu()
+    generate_main_menu(main_menu_option)
+  elseif level_state == "level_select" then
+    generate_level_select(level_select_option)
   elseif level_state == "win" then
     generate_win_menu(in_game_menu_option)
   elseif level_state == "lose" then
@@ -1196,18 +1205,40 @@ function create_player_points()
 end
 -->8
 --menu
-function generate_main_menu()
+
+function generate_main_menu(option_selected)
   cls()
   _draw_ui_elements()
-  level_state = "menu"
-  level_num = 1
   sspr(0, 37, 41, 10, 44, 30)
-  print("[z]:play", 33, 45, 7)
+  y_locations = {45, 53}
+  descriptions = {"new game", "level select"}
+  x_colors = {14, 15}
+  for i=1,count(descriptions) do
+    print("[", 36, y_locations[i], 7)
+    print("]", 42, y_locations[i], 7)
+    print(descriptions[i], 49, y_locations[i], 7)
+  end
+  print("x", 39, y_locations[option_selected], x_colors[option_selected])
+end
+
+function init_main_menu()
+  level_num = 1
+  main_menu_option = 1
+  level_state = "menu"
 end
 
 function handle_menu_input()
-  if btnp(🅾️) then
-    _init_level(level_num)
+  if btnp(⬆️) then
+    main_menu_option = 1
+  elseif btnp(⬇️) then
+    main_menu_option = 2
+  elseif btnp(❎) or btnp(🅾️) then
+    if main_menu_option == 1 then
+      _init_level(level_num)
+    else
+      level_select_option = 1
+      level_state = "level_select"
+    end
   end
 end
 
@@ -1223,7 +1254,7 @@ function handle_win_menu_input()
       level_num -= 1
       _init_level(level_num)
     else
-      generate_main_menu()
+      init_main_menu()
     end
   end
 end
@@ -1233,13 +1264,14 @@ function generate_win_menu(option_selected)
   rect(26, 35, 99, 75, 7)
   print("complete :0", 42, 39, 11)
   y_locations = {47, 55, 63}
-  option_text = {"next level", "replay lvl", "main menu"}
+  option_text = {"next level", "replay level", "main menu"}
+  x_colors = {11, 12, 8}
   for i=1,3 do
     print("[", 35, y_locations[i], 7)
     print("]", 41, y_locations[i], 7)
     print(option_text[i], 48, y_locations[i], 7)
   end
-  print("x", 38, y_locations[option_selected], 12)
+  print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
 
 function handle_lose_menu_input()
@@ -1251,7 +1283,7 @@ function handle_lose_menu_input()
     if in_game_menu_option == 1 then
       _init_level(level_num)
     else
-      generate_main_menu()
+      init_main_menu()
     end
   end
 end
@@ -1262,12 +1294,13 @@ function generate_lose_menu(option_selected)
   print("lose :(", 51, 39, 8)
   y_locations = {47, 55}
   option_text = {"replay lvl", "main menu"}
+  x_colors = {12, 8}
   for i=1,2 do
     print("[", 35, y_locations[i], 7)
     print("]", 41, y_locations[i], 7)
     print(option_text[i], 48, y_locations[i], 7)
   end
-  print("x", 38, y_locations[option_selected], 12)
+  print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
 -->8
 --levels
@@ -1484,7 +1517,7 @@ function draw_level_text()
     end
 end
 -->8
---colorblind_mode
+--system
 local system
 
 function system_init()
@@ -1507,7 +1540,11 @@ function system_init()
         end
         return true -- stay open
     end
+    function clear_save()
+        dset(0, 0)
+    end
     menuitem(1, "colorblind: "..system.settings.colorblind, menuitem_colorblind)
+    menuitem(2, "clear save", clear_save)
 end
 
 function adjust_for_colorblindness()
@@ -1517,6 +1554,28 @@ function adjust_for_colorblindness()
         pal({[3]=13, [8]=9, [9]=6, [10]=15, [11]=12, [13]=5, [14]=15}, 0)
     end
     map()
+end
+-->8
+--save_data
+function get_furthest_level()
+    if dget(0) == nil then return 1 end
+    return dget(0)
+end
+
+function update_furthest_level(level_number)
+    if level_number > get_furthest_level() then
+        dset(0, level_number)
+    end
+end
+-->8
+--level_select
+function generate_level_select()
+    rectfill(26, 65, 99, 85, 0)
+    rect(26, 65, 99, 85, 7)
+end
+
+function handle_level_select_input()
+
 end
 __gfx__
 00600000111d1110000000000111d11111111111d111111d11111111111d11111111111d1111111100000111d111000005555555055555550566766505555555

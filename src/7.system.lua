@@ -20,7 +20,11 @@ function system_init()
         end
         return true -- stay open
     end
+    function clear_save()
+        dset(0, 0)
+    end
     menuitem(1, "colorblind: "..system.settings.colorblind, menuitem_colorblind)
+    menuitem(2, "clear save", clear_save)
 end
 
 function adjust_for_colorblindness()

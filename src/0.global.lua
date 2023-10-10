@@ -1,13 +1,18 @@
 
 function _init()
   system_init()
+  cartdata("rotato_save")
   max_distance = 7 -- distance to check for a waypoint in a direction
-  level_state = "menu" -- "playing", "win", "lose", "menu"
+  level_state = "menu" -- "playing", "win", "lose", "menu", "level_select"
   in_game_menu_option = -1
+  main_menu_option = 1
+  level_select_option = 1
   level_num = 1 -- current level
+  furthest_level_unlocked = get_furthest_level()
 end
 
 function _init_level(level_num)
+  update_furthest_level(level_num)
   cls()
   level_state = "playing"
   in_game_menu_option = -1
@@ -136,6 +141,8 @@ end
 function _handleinputs()
   if level_state == "menu" then
     handle_menu_input()
+  elseif level_state == "level_select" then
+    handle_level_select_input()
   elseif level_state=="win" then
     handle_win_menu_input()
   elseif level_state=="lose" then
@@ -208,7 +215,9 @@ function _draw()
   adjust_for_colorblindness()
   _draw_ui_elements()
   if level_state == "menu" then
-    generate_main_menu()
+    generate_main_menu(main_menu_option)
+  elseif level_state == "level_select" then
+    generate_level_select(level_select_option)
   elseif level_state == "win" then
     generate_win_menu(in_game_menu_option)
   elseif level_state == "lose" then
