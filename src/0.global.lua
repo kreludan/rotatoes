@@ -25,15 +25,29 @@ function _init_level(level_num)
   level_player = {} -- holds the player character
   level_goal = {} -- holds the goal tile
   level_enemies = {} -- holds all enemy tiles
-  _init_rotators()
-  _init_static_tiles()
-  _init_characters()
+  _init_tiles()
   _init_waypoints()
   _init_character_details()
 end
 
-function _init_characters()
-  character_blueprint = level_blueprints[level_num]["character_blueprint"]
+function _init_tiles()
+  if level_blueprints[level_num]["level_num"] == nil then
+    character_blueprint = decode_level_from_string(level_blueprints[level_num])["character_blueprint"]
+    rotator_blueprint = decode_level_from_string(level_blueprints[level_num])["rotator_blueprint"]
+    static_tile_blueprint = decode_level_from_string(level_blueprints[level_num])["static_tile_blueprint"]
+  else
+    character_blueprint = level_blueprints[level_num]["character_blueprint"]
+    rotator_blueprint = level_blueprints[level_num]["rotator_blueprint"]
+    static_tile_blueprint = level_blueprints[level_num]["static_tile_blueprint"]
+  end
+
+  _init_characters(character_blueprint)
+  _init_rotators(rotator_blueprint)
+  _init_static_tiles(static_tile_blueprint)
+end
+
+function _init_characters(character_blueprint)
+  print(character_blueprint)
   for i = 1, count(character_blueprint) do
     add_char_to_list(
             character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
@@ -54,8 +68,7 @@ function _init_character_details()
   end
 end
 
-function _init_rotators()
-  rotator_blueprint = level_blueprints[level_num]["rotator_blueprint"]
+function _init_rotators(rotator_blueprint)
   for i = 1, count(rotator_blueprint) do
     add_rotator_to_list(
       rotator_blueprint[i][1],
@@ -66,9 +79,7 @@ function _init_rotators()
   end
 end
 
-function _init_static_tiles()
-  static_tile_blueprint = level_blueprints[level_num]["static_tile_blueprint"]
-
+function _init_static_tiles(static_tile_blueprint)
   for i = 1, count(static_tile_blueprint) do
     add_static_tile_to_list(
       static_tile_blueprint[i][1],
