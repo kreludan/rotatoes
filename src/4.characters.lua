@@ -5,6 +5,8 @@ function add_char_to_list(char_type, char_list, x_origin, y_origin)
     tile_to_prep = create_goal()
   elseif char_type == "deathtile" then
     tile_to_prep = create_deathtile()
+  elseif char_type == "enemy_basic" then
+    tile_to_prep = create_enemy_basic()
   end
   add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
 end
@@ -285,6 +287,11 @@ function create_player()
   return cast_tile_to_char(player_tile, "player", 1)
 end
 
+function create_enemy_basic()
+  basic_enemy_points = create_player_points()
+  basic_enemy_tile = create_tile(basic_enemy_points, 0, 1, 0, 1, 0, 1, nil)
+  return cast_tile_to_char(basic_enemy_tile, "enemy_basic", 1)
+end
 
 function create_goal()
   goal_points = create_square_points()

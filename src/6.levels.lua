@@ -24,6 +24,7 @@ level_blueprints = {
      character_blueprint = {
          {"goal", 104, 63 },
          {"player", 22, 63 },
+         {"enemy_basic", 90, 63}
      },
      rotator_blueprint = {
          { "vert", 48, 63 },
