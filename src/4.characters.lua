@@ -283,13 +283,13 @@ end
 
 function create_player()
   player_points = create_player_points()
-  player_tile = create_tile(player_points, 0, 1, 0, 9, 0, 9, nil)
+  player_tile = create_tile(player_points, 2, 2, 0, 8, 0, 8, nil)
   return cast_tile_to_char(player_tile, "player", 1)
 end
 
 function create_enemy_basic()
   basic_enemy_points = create_player_points()
-  basic_enemy_tile = create_tile(basic_enemy_points, 0, 1, 0, 1, 0, 1, nil)
+  basic_enemy_tile = create_tile(basic_enemy_points, 2, 2, 0, 3, 0, 3, nil)
   return cast_tile_to_char(basic_enemy_tile, "enemy_basic", 1)
 end
 
@@ -305,23 +305,14 @@ function create_deathtile()
   return cast_tile_to_char(death_tile, "deathtile", 0)
 end
 
-
 function create_player_points()
-  player_points = {}
-  for y = 0, 2 do
-    if y == 1 then
-      for x = 0, 2 do
-        add(
-          player_points,
-          create_point(x, y, 1)
-        )
-      end
-    else
-      add(
-        player_points,
-        create_point(0, y, 1)
-      )
-    end
-  end
+  player_points={}
+  add(player_points, create_point(0,0,1))
+  add(player_points, create_point(1,1,1))
+  add(player_points, create_point(0,2,1))
+  add(player_points, create_point(1,2,1))
+  add(player_points, create_point(2,2,1))
+  add(player_points, create_point(1,3,1))
+  add(player_points, create_point(0,4,1))
   return player_points
 end
