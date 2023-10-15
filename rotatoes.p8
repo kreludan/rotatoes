@@ -18,7 +18,10 @@ end
 
 function _init_level(level_num)
   update_furthest_level(level_num)
-  cls()
+  cls(7) -- clear screen, set as white
+  palt(15, true) -- beige color as transparency is true
+  palt(0, false) -- black color as transparency is false
+
   level_state = "playing"
   in_game_menu_option = -1
   controlled_tile = 1 -- denotes the tile currently controlled on scene
@@ -51,7 +54,6 @@ function _init_tiles()
 end
 
 function _init_characters(character_blueprint)
-  print(character_blueprint)
   for i = 1, count(character_blueprint) do
     add_char_to_list(
             character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
@@ -169,14 +171,14 @@ function _handleinputs()
 end
 
 function handle_playing_input()
-  if btnp(🅾️) then
+  if btnp(❎) then
     if controlled_tile
         == count(rotators_to_draw) then
       controlled_tile = 1
     else
       controlled_tile += 1
     end
-  elseif btnp(❎) then
+  elseif btnp(🅾️) then
     if controlled_tile == 1 then
       controlled_tile = count(rotators_to_draw)
     else
@@ -239,9 +241,12 @@ function _draw()
   elseif level_state == "lose" then
     generate_lose_menu(in_game_menu_option)
   elseif level_state == "playing" then
-    cls()
+    cls(7) -- clear screen, set as white
+    palt(15, true) -- beige color as transparency is true
+    palt(0, false) -- black color as transparency is false
+
     _draw_ui_elements()
-    print(tostring(level_num), 4, 4, 7)
+    print(tostring(level_num), 4, 4, 0)
     draw_level_text()
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
@@ -264,7 +269,7 @@ function _draw()
 end
 
 function _draw_ui_elements()
-  rect(0, 0, 127, 127, 7)
+  rect(1, 1, 126, 126, 0)
 end
 -->8
 --tiles
@@ -843,7 +848,8 @@ function add_static_tile_to_list(statictile_type, statictile_list, x_origin, y_o
     { "corr_turn_downleft", 105, 8 },
     { "corr_turn_downright", 113, 8 },
     { "singleton_horiz", 97, 24 },
-    { "singleton_vert", 105, 24 }
+    { "singleton_vert", 105, 24 },
+    { "invisible_tile", 113, 24 }
   }
   tile_to_prep = {}
   while tileindex != count(tile_types) do
@@ -1217,16 +1223,19 @@ end
 --menu
 
 function generate_main_menu(option_selected)
-  cls()
+  cls(7) -- clear screen, set as white
+  palt(15, true) -- beige color as transparency is true
+  palt(0, false) -- black color as transparency is false
+
   _draw_ui_elements()
   sspr(0, 37, 41, 10, 44, 30)
   y_locations = {45, 53, 61}
   descriptions = {"new game", "level select", "settings"}
   x_colors = {14, 8, 2}
   for i=1,count(descriptions) do
-    print("[", 36, y_locations[i], 7)
-    print("]", 42, y_locations[i], 7)
-    print(descriptions[i], 49, y_locations[i], 7)
+    print("[", 36, y_locations[i], 0)
+    print("]", 42, y_locations[i], 0)
+    print(descriptions[i], 49, y_locations[i], 0)
   end
   print("x", 39, y_locations[option_selected], x_colors[option_selected])
 end
@@ -1270,16 +1279,16 @@ function handle_win_menu_input()
 end
 
 function generate_win_menu(option_selected)
-  rectfill(26, 35, 99, 75, 0)
-  rect(26, 35, 99, 75, 7)
+  rectfill(26, 35, 99, 75, 7)
+  rect(26, 35, 99, 75, 0)
   print("complete :0", 42, 39, 11)
   y_locations = {47, 55, 63}
   option_text = {"next level", "replay level", "main menu"}
   x_colors = {11, 12, 8}
   for i=1,3 do
-    print("[", 35, y_locations[i], 7)
-    print("]", 41, y_locations[i], 7)
-    print(option_text[i], 48, y_locations[i], 7)
+    print("[", 35, y_locations[i], 0)
+    print("]", 41, y_locations[i], 0)
+    print(option_text[i], 48, y_locations[i], 0)
   end
   print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
@@ -1299,16 +1308,16 @@ function handle_lose_menu_input()
 end
 
 function generate_lose_menu(option_selected)
-  rectfill(26, 35, 99, 65, 0)
-  rect(26, 35, 99, 65, 7)
+  rectfill(26, 35, 99, 65, 7)
+  rect(26, 35, 99, 65, 0)
   print("lose :(", 51, 39, 8)
   y_locations = {47, 55}
   option_text = {"replay lvl", "main menu"}
   x_colors = {12, 8}
   for i=1,2 do
-    print("[", 35, y_locations[i], 7)
-    print("]", 41, y_locations[i], 7)
-    print(option_text[i], 48, y_locations[i], 7)
+    print("[", 35, y_locations[i], 0)
+    print("]", 41, y_locations[i], 0)
+    print(option_text[i], 48, y_locations[i], 0)
   end
   print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
@@ -1336,29 +1345,15 @@ end
 level_blueprints = {
     "1-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "2-deathtile,76,70|deathtile,76,32|deathtile,57,89|goal,95,51|player,31,70-vert,57,70|l2,76,51-corrend_left,31,70|corr_horiz,38,70|corrend_right,45,70|singleton_horiz,69,70|singleton_horiz,76,70|singleton_vert,57,82|singleton_vert,57,89|corrend_down,57,58|corr_turn_upleft,57,51|corrend_right,64,51|singleton_vert,76,39|singleton_vert,76,32|singleton_horiz,88,51|singleton_horiz,95,51",
-    "3-goal,104,63|player,22,63|enemy_basic,90,63-horiz,48,63|horiz,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_left,48,75|corr_horiz,55,75|corr_horiz,62,75|corr_horiz,69,75|corr_horiz,76,75|corrend_right,78,75|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    {level_num = 4,
-     character_blueprint = {
-         {"player", 45, 80 },
-     },
-     rotator_blueprint = {
-         { "horiz", 50, 80 },
-         { "plus", 64, 42 }
-     },
-     static_tile_blueprint = {
-         { "corrend_down", 50, 68 },
-         { "corr_turn_upleft", 50, 61 },
-         { "corr_horiz", 57, 61 },
-         { "corr_turn_downright", 64, 61 },
-         { "corrend_up", 64, 54 }
-     }},
-    "4-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
+    "3-goal,104,63|enemy_basic,90,63|player,22,63-horiz,48,63|horiz,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_left,48,75|corr_horiz,55,75|corr_horiz,62,75|corr_horiz,69,75|corr_horiz,76,75|corrend_right,78,75|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
+    "4-goal,83,28|enemy_basic,40,47|player,40,85-horiz,45,85|plus,59,47|horiz,83,47-corrend_down,45,73|corr_turn_upleft,45,66|corr_horiz,52,66|corr_turn_downright,59,66|corrend_up,59,59|corrend_right,47,47|corrend_left,40,47|corrend_down,59,35|corrend_up,59,28|singleton_horiz,71,47|singleton_vert,83,35|invisible_tile,83,28",
     "5-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "6-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "7-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "8-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "9-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "10-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
+    "11-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     {level_num = 11,
      character_blueprint = {
          {"goal", 104, 63 },
@@ -1386,10 +1381,10 @@ function draw_level_text()
     if level_num == 1 then
         sspr(0, 16, 8, 5, 39, 37)
         sspr(0, 24, 8, 5, 50, 37)
-        print("rotate", 38, 45)
+        print("rotate", 38, 45, 0)
         sspr(0, 30, 5, 7, 72, 36)
         sspr(6, 30, 5, 7, 80, 36)
-        print("swap", 71, 45)
+        print("swap", 71, 45, 0)
     end
 end
 -->8
@@ -1456,51 +1451,132 @@ function handle_level_select_input()
 
 end
 __gfx__
-00000000111d1110000000000111d11111111111d111111d11111111111d11111111111d1111111100000111d111000005555555055555550566766505555555
-000000001dd6dd100000000001dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1000001dd6dd1000005666666066666660566766506666665
-000000001dd6dd100000000001dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1000001dd6dd1000005666666066666660566766506666665
-800000001dd6dd100000000001dd6dd1d6666666666dd6666666666d1dd6dd1d666666666666666d000001dd6dd100000d77777707777777056676650777777d
-080000001dd6dd100000000001dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1000001dd6dd1000005666666066666660566766506666665
-888000001dd6dd111111111111dd6dd11ddddddd6dd11dd6ddddddd11dd6dd11ddddddd6ddddddd1111111dd6dd1111115666666066666660566766506666665
-080000001dd6ddddddd11ddddddd6dd1111111dd6dd11dd6dd1111111dd6dd111111111d111111111ddddddd6ddddddd15555555055555550566766505555555
-800000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd10000000000000000000000000000000
-10000000d6666666666dd6666666666d000001dd6dd11dd6dd100000d66666d00000000000000000d666666666666666d5555555056676650566766505555555
-010000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
-111000001dd6ddddddd11ddddddd6dd1000001dd6dd11dd6dd1000001dd6dd1000000000000000001ddddddd6ddddddd15666666056676660666766506666665
-01000000111d1111111111111111d11100000111d111111d111000001dd6dd100000000000000000111111dd6dd1111115667777056677770777766507777665
-100000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667666056666660666666506667665
-000000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667666056666660666666506667665
-000000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000005667665055555550555555505667665
-000000000000000000000000000000000000000000000000000000001dd6dd100000000000000000000001dd6dd1000000000000000000000000000000000000
-00600000000000000000000000000000000000000000000000000000111d1110000000000000000000000111d11100000555d555056676650333d3330222d222
-06000000222d2220000000000222d22222222222d222222d22222222222d22222222222d2222222200000222d2220000056676650566766503bb6bb302886882
-677777762ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bbabb30288e882
-060000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee2000005667665056676650d6aaa6d0d6eee6d
-006000002ee7ee200000000002ee7ee2d7777777777dd7777777777d2ee7ee2d777777777777777d000002ee7ee20000056676650566766503bbabb30288e882
-000000002ee7ee200000000002ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2000002ee7ee20000056676650566766503bb6bb302886882
-000000002ee7ee222222222222ee7ee22eeeeeee7ee22ee7eeeeeee22ee7ee22eeeeeee7eeeeeee2222222ee7ee22222256676650555d5550333d3330222d222
-000000002ee7eeeeeee22eeeeeee7ee2222222ee7ee22ee7ee2222222ee7ee222222222d222222222eeeeeee7eeeeeee20000000000000000000000000000000
-000009002ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee255555550555d5550000000000000000
-00000090d7777777777dd7777777777d000002ee7ee22ee7ee200000d77777d00000000000000000d777777777777777d5666665056676650000000000000000
-9ffffff92ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee25666665056676650000000000000000
-000000902ee7eeeeeee22eeeeeee7ee2000002ee7ee22ee7ee2000002ee7ee2000000000000000002eeeeeee7eeeeeee2d77777d056676650000000000000000
-00000900222d2222222222222222d22200000222d222222d222000002ee7ee200000000000000000222222ee7ee2222225666665056676650000000000000000
-000000000000000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000005666665056676650000000000000000
-3bbb30200020000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee20000055555550555d5550000000000000000
-0000b0800080000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
-000b00080800000000000000000000000000000000000000000000002ee7ee200000000000000000000002ee7ee2000000000000000000000000000000000000
-00b00000800000000000000000000000000000000000000000000000222d2220000000000000000000000222d222000000000000000000000000000000000000
-0b000008080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-b0000080008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-3bbb3020002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-d666d1ccc1eeeee228882999994bbbb34fff466d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60006c000c00e00080008009000b000bf0006000d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60006c000c00e00080008009000b000bf00060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60006c000c00e00080008009000b000bf0000d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-6666dc000c00e00088882009000b000bff4000600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-6d000c000c00e00080008009000b000bf000000d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60d00c000c00e00080008009000b000bf00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60060c000c00e00080008009000b000bf00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-60006c000c00e00080008009000b000bf00060006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-d000d1ccc1002000200020040003bbb34fff4d660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffff0000000ffffffffff0000000000000000000000000000000000000000000000000000000fffff0000000fffff6666666f6666666f6777776f6666666
+ffffffff0777770ffffffffff0777770077777777770077777777770077777007777777777777770fffff0777770fffff6777777f7777777f6777776f7777776
+ffffffff0777770ffffffffff0777770077777777770077777777770077777007777777777777770fffff0777770fffff6777777f7777777f6777776f7777776
+8fffffff0777770ffffffffff0777770077777777770077777777770077777007777777777777770fffff0777770fffff6777777f7777777f6777776f7777776
+f8ffffff0777770ffffffffff0777770077777777770077777777770077777007777777777777770fffff0777770fffff6777777f7777777f6777776f7777776
+888fffff077777000000000000777770077777777770077777777770077777007777777777777770000000777770000006777777f7777777f6777776f7777776
+f8ffffff077777777770077777777770000000777770077777000000077777000000000000000000077777777777777706666666f6666666f6777776f6666666
+8fffffff077777777770077777777770fffff07777700777770fffff0777770fffffffffffffffff07777777777777770fffffffffffffffffffffffffffffff
+dfffffff077777777770077777777770fffff07777700777770fffff0777770fffffffffffffffff077777777777777706666666f6777776f6777776f6666666
+fdffffff077777777770077777777770fffff07777700777770fffff0777770fffffffffffffffff077777777777777706777777f6777777f7777776f7777776
+dddfffff077777777770077777777770fffff07777700777770fffff0777770fffffffffffffffff077777777777777706777777f6777777f7777776f7777776
+fdffffff000000000000000000000000fffff00000000000000fffff0777770fffffffffffffffff000000777770000006777777f6777777f7777776f7777776
+dfffffffffffffffffffffffffffffffffffffffffffffffffffffff0777770ffffffffffffffffffffff0777770fffff6777777f6777777f7777776f7777776
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0777770ffffffffffffffffffffff0777770fffff6777777f6777777f7777776f7777776
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0777770ffffffffffffffffffffff0777770fffff6777776f6666666f6666666f6777776
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0777770ffffffffffffffffffffff0777770ffffffffffffffffffffffffffffffffffff
+ff0fffffffffffffffffffffffffffffffffffffffffffffffffffff0000000ffffffffffffffffffffff0000000fffff6666666f6777776f0000000f0000000
+f0ffffff0000000ffffffffff0000000000000000000000000000000000000000000000000000000fffff0000000fffff6777776f6777776f0bbbbb0f0888880
+000000000666660ffffffffff0666660066666666660066666666660066666006666666666666660fffff0666660fffff6777776f6777776f0bbbbb0f0888880
+f0ffffff0677760ffffffffff0677760067777777760067777777760067776006777777777777760fffff0677760fffff6777776f6777776f0bbbbb0f0888880
+ff0fffff0677760ffffffffff0677760067777777760067777777760067776006777777777777760fffff0677760fffff6777776f6777776f0bbbbb0f0888880
+ffffffff0677760ffffffffff0677760067777777760067777777760067776006777777777777760fffff0677760fffff6777776f6777776f0bbbbb0f0888880
+ffffffff067776000000000000677760066666677760067776666660067776006666666666666660000000677760000006777776f6666666f0000000f0000000
+ffffffff06777666666006666667776000000067776006777600000006777600000000000000000006666667776666660fffffffffffffffffffffffffffffff
+fffff0ff067777777760067777777760fffff06777600677760fffff0677760fffffffffffffffff067777777777777606666666f6666666f7777777ffffffff
+ffffff0f067777777760067777777760fffff06777600677760fffff0677760fffffffffffffffff067777777777777606777776f6777776f7777777ffffffff
+00000000067777777760067777777760fffff06777600677760fffff0677760fffffffffffffffff067777777777777606777776f6777776f7777777ffffffff
+ffffff0f066666666660066666666660fffff06666600666660fffff0677760fffffffffffffffff066666677766666606777776f6777776f7777777ffffffff
+fffff0ff000000000000000000000000fffff00000000000000fffff0677760fffffffffffffffff000000677760000006777776f6777776f7777777ffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0677760ffffffffffffffffffffff0677760fffff6777776f6777776f7777777ffffffff
+00000f0fff0fffffffffffffffffffffffffffffffffffffffffffff0677760ffffffffffffffffffffff0677760fffff6666666f6666666f7777777ffffffff
+ffff0f0fff0fffffffffffffffffffffffffffffffffffffffffffff0677760ffffffffffffffffffffff0677760ffffffffffffffffffffffffffffffffffff
+fff0fff0f0ffffffffffffffffffffffffffffffffffffffffffffff0666660ffffffffffffffffffffff0666660ffffffffffffffffffffffffffffffffffff
+ff0fffff0fffffffffffffffffffffffffffffffffffffffffffffff0000000ffffffffffffffffffffff0000000ffffffffffffffffffffffffffffffffffff
+f0fffff0f0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fffff0fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+00000f0fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0000010000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fff00fff0ff0fff0fff0ff0fff0fff00fff0fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fff00fff0ff0fff0fff0ff0fff0fff00fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fff00fff0ff0fff0fff0ff0fff0fff00ffff0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+000000fff0ff0fff00000ff0fff0fff0000fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+00fff0fff0ff0fff0fff0ff0fff0fff00ffffff0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0f0ff0fff0ff0fff0fff0ff0fff0fff00fffffff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0ff0f0fff0ff0fff0fff0ff0fff0fff00fffffff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fff00fff0ff0fff0fff0ff0fff0fff00fff0fff0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+0fff000000ff0fff0fff0ff0fff0000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 

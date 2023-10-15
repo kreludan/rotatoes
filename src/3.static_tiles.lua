@@ -12,7 +12,8 @@ function add_static_tile_to_list(statictile_type, statictile_list, x_origin, y_o
     { "corr_turn_downleft", 105, 8 },
     { "corr_turn_downright", 113, 8 },
     { "singleton_horiz", 97, 24 },
-    { "singleton_vert", 105, 24 }
+    { "singleton_vert", 105, 24 },
+    { "invisible_tile", 113, 24 }
   }
   tile_to_prep = {}
   while tileindex != count(tile_types) do

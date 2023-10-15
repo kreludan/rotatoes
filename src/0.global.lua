@@ -14,7 +14,10 @@ end
 
 function _init_level(level_num)
   update_furthest_level(level_num)
-  cls()
+  cls(7) -- clear screen, set as white
+  palt(15, true) -- beige color as transparency is true
+  palt(0, false) -- black color as transparency is false
+
   level_state = "playing"
   in_game_menu_option = -1
   controlled_tile = 1 -- denotes the tile currently controlled on scene
@@ -47,7 +50,6 @@ function _init_tiles()
 end
 
 function _init_characters(character_blueprint)
-  print(character_blueprint)
   for i = 1, count(character_blueprint) do
     add_char_to_list(
             character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
@@ -165,14 +167,14 @@ function _handleinputs()
 end
 
 function handle_playing_input()
-  if btnp(🅾️) then
+  if btnp(❎) then
     if controlled_tile
         == count(rotators_to_draw) then
       controlled_tile = 1
     else
       controlled_tile += 1
     end
-  elseif btnp(❎) then
+  elseif btnp(🅾️) then
     if controlled_tile == 1 then
       controlled_tile = count(rotators_to_draw)
     else
@@ -235,9 +237,12 @@ function _draw()
   elseif level_state == "lose" then
     generate_lose_menu(in_game_menu_option)
   elseif level_state == "playing" then
-    cls()
+    cls(7) -- clear screen, set as white
+    palt(15, true) -- beige color as transparency is true
+    palt(0, false) -- black color as transparency is false
+
     _draw_ui_elements()
-    print(tostring(level_num), 4, 4, 7)
+    print(tostring(level_num), 4, 4, 0)
     draw_level_text()
     for i = 1, count(rotators_to_draw) do
       if i == controlled_tile then
@@ -260,5 +265,5 @@ function _draw()
 end
 
 function _draw_ui_elements()
-  rect(0, 0, 127, 127, 7)
+  rect(1, 1, 126, 126, 0)
 end
