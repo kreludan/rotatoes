@@ -20,24 +20,31 @@ function build_blueprint_string(blueprint)
     return blueprint_string
 end
 
-level = {level_num = 1,
- character_blueprint = {
-     {"goal", 104, 63 },
-     {"player", 22, 63 },
- },
- rotator_blueprint = {
-     { "vert", 48, 63 },
-     { "vert", 78, 63 }
- },
- static_tile_blueprint = {
-     { "corrend_left", 22, 63 },
-     { "corr_horiz", 29, 63 },
-     { "corrend_right", 36, 63 },
-     { "corrend_left", 60, 63 },
-     { "corrend_right", 66, 63 },
-     { "corrend_left", 90, 63},
-     { "corrend_right", 97, 63 },
-     { "corrend_right", 104, 63 }
- }}
+level = {level_num = 3,
+         character_blueprint = {
+             {"goal", 104, 63 },
+             {"player", 22, 63 },
+             {"enemy_basic", 90, 63}
+         },
+         rotator_blueprint = {
+             { "horiz", 48, 63 },
+             { "horiz", 78, 63 }
+         },
+         static_tile_blueprint = {
+             { "corrend_left", 22, 63 },
+             { "corr_horiz", 29, 63 },
+             { "corrend_right", 36, 63 },
+             { "corrend_left", 60, 63 },
+             { "corrend_left", 48, 75},
+             { "corr_horiz", 55, 75},
+             { "corr_horiz", 62, 75},
+             { "corr_horiz", 69, 75},
+             { "corr_horiz", 76, 75},
+             { "corrend_right", 78, 75},
+             { "corrend_right", 66, 63 },
+             { "corrend_left", 90, 63},
+             { "corrend_right", 97, 63 },
+             { "corrend_right", 104, 63 }
+         }}
 
 print(encode_level_as_string(level))
