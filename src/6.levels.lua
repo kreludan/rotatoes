@@ -21,6 +21,21 @@ level_blueprints = {
     "1-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "2-deathtile,76,70|deathtile,76,32|deathtile,57,89|goal,95,51|player,31,70-vert,57,70|l2,76,51-corrend_left,31,70|corr_horiz,38,70|corrend_right,45,70|singleton_horiz,69,70|singleton_horiz,76,70|singleton_vert,57,82|singleton_vert,57,89|corrend_down,57,58|corr_turn_upleft,57,51|corrend_right,64,51|singleton_vert,76,39|singleton_vert,76,32|singleton_horiz,88,51|singleton_horiz,95,51",
     "3-goal,104,63|player,22,63|enemy_basic,90,63-horiz,48,63|horiz,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_left,48,75|corr_horiz,55,75|corr_horiz,62,75|corr_horiz,69,75|corr_horiz,76,75|corrend_right,78,75|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
+    {level_num = 4,
+     character_blueprint = {
+         {"player", 45, 80 },
+     },
+     rotator_blueprint = {
+         { "horiz", 50, 80 },
+         { "plus", 64, 42 }
+     },
+     static_tile_blueprint = {
+         { "corrend_down", 50, 68 },
+         { "corr_turn_upleft", 50, 61 },
+         { "corr_horiz", 57, 61 },
+         { "corr_turn_downright", 64, 61 },
+         { "corrend_up", 64, 54 }
+     }},
     "4-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "5-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
     "6-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
