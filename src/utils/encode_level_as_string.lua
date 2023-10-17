@@ -42,8 +42,8 @@ level = {level_num = 4,
              { "corrend_left", 40, 47 },
              { "corrend_down", 59, 35},
              { "corrend_up", 59, 28 },
-             { "singleton_horiz", 71, 47 },
-             { "singleton_vert", 83, 35 },
+             { "corr_singleton", 71, 47 },
+             { "corr_singleton", 83, 35 },
              { "invisible_tile", 83, 28 }
          }}
 
