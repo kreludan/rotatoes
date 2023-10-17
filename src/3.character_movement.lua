@@ -1,16 +1,3 @@
-function add_char_to_list(char_type, char_list, x_origin, y_origin)
-  if char_type == "player" then
-    tile_to_prep = create_player()
-  elseif char_type == "goal" then
-    tile_to_prep = create_goal()
-  elseif char_type == "deathtile" then
-    tile_to_prep = create_deathtile()
-  elseif char_type == "enemy_basic" then
-    tile_to_prep = create_enemy_basic()
-  end
-  add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
-end
-
 function get_starting_waypoint(char, waypoints)
   for i=1, count(waypoints) do
     if char.center_x == waypoints[i].draw_waypoint.x and char.center_y == waypoints[i].draw_waypoint.y then
@@ -191,6 +178,43 @@ function get_unitvector_ahead(char)
   return x_ahead, y_ahead
 end
 
+function initialize_moving_right(char)
+  char.movement_dir = "right"
+end
+
+function initialize_moving_left(char)
+  char.movement_dir = "left"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    char.draw_points[i].x = (x_origin*2) - char.draw_points[i].x
+    char.draw_points[i].y = (y_origin*2) - char.draw_points[i].y
+  end
+end
+
+function initialize_moving_up(char)
+  char.movement_dir = "up"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x - char.center_x
+    zeroed_y = char.draw_points[i].y - char.center_y
+    char.draw_points[i].x = zeroed_y  + char.center_x
+    char.draw_points[i].y = (zeroed_x * -1) + char.center_y
+  end
+end
+
+function initialize_moving_down(char)
+  char.movement_dir = "up"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x - char.center_x
+    zeroed_y = char.draw_points[i].y - char.center_y
+    char.draw_points[i].x = (zeroed_y * -1)  + char.center_x
+    char.draw_points[i].y = zeroed_x + char.center_y
+  end
+end
 
 function turn_counterclockwise(char)
   turn_movement_counterclockwise(char)
@@ -279,40 +303,4 @@ function move_character(char)
   else
     return char
   end
-end
-
-function create_player()
-  player_points = create_player_points()
-  player_tile = create_tile(player_points, 2, 2, 0, 8, 0, 8, nil)
-  return cast_tile_to_char(player_tile, "player", 1)
-end
-
-function create_enemy_basic()
-  basic_enemy_points = create_player_points()
-  basic_enemy_tile = create_tile(basic_enemy_points, 2, 2, 0, 3, 0, 3, nil)
-  return cast_tile_to_char(basic_enemy_tile, "enemy_basic", 1)
-end
-
-function create_goal()
-  goal_points = create_square_points()
-  goal_tile = create_tile(goal_points, 3, 3, 113, 16, 113, 16, nil)
-  return cast_tile_to_char(goal_tile, "goal", 0)
-end
-
-function create_deathtile()
-  deathtile_points = create_square_points()
-  death_tile = create_tile(deathtile_points, 3, 3, 121, 16, 121, 16, nil)
-  return cast_tile_to_char(death_tile, "deathtile", 0)
-end
-
-function create_player_points()
-  player_points={}
-  add(player_points, create_point(0,0,1))
-  add(player_points, create_point(1,1,1))
-  add(player_points, create_point(0,2,1))
-  add(player_points, create_point(1,2,1))
-  add(player_points, create_point(2,2,1))
-  add(player_points, create_point(1,3,1))
-  add(player_points, create_point(0,4,1))
-  return player_points
 end

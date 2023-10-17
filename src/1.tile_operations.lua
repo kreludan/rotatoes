@@ -18,7 +18,7 @@ function create_point_w_0s(x, y, x0, y0, c)
   return point
 end
 
-function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, waypoints)
+function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, lockedspritestart_x, lockedspritestart_y, waypoints)
   local tile = {}
   tile.points = points
   tile.draw_points = {}
@@ -36,6 +36,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.spritestart_y = spritestart_y
   tile.selectedspritestart_x = selectedspritestart_x
   tile.selectedspritestart_y = selectedspritestart_y
+  tile.lockedspritestart_x = lockedspritestart_x
+  tile.lockedspritestart_y = lockedspritestart_y
   tile.theta = 15
   tile.rotating = false
   tile.rotatedir = 0
@@ -51,11 +53,9 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   return tile
 end
 
-function cast_tile_to_char(tile, char_type, char_speed)
+function cast_tile_to_char(tile, char_type)
   tile.is_character = true
   tile.char_type = char_type
-  tile.char_speed = char_speed
-  tile.movement_dir = "right"
   return tile
 end
 

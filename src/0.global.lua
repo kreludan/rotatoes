@@ -38,23 +38,50 @@ function _init_tiles()
     character_blueprint = decode_level_from_string(level_blueprints[level_num])["character_blueprint"]
     rotator_blueprint = decode_level_from_string(level_blueprints[level_num])["rotator_blueprint"]
     static_tile_blueprint = decode_level_from_string(level_blueprints[level_num])["static_tile_blueprint"]
+    character_info_blueprint = decode_level_from_string(level_blueprints[level_num])["character_info_blueprint"]
   else
     character_blueprint = level_blueprints[level_num]["character_blueprint"]
     rotator_blueprint = level_blueprints[level_num]["rotator_blueprint"]
     static_tile_blueprint = level_blueprints[level_num]["static_tile_blueprint"]
+    character_info_blueprint = nil
   end
 
   _init_characters(character_blueprint)
   _init_rotators(rotator_blueprint)
   _init_static_tiles(static_tile_blueprint)
+  _init_character_orientations()
 end
 
 function _init_characters(character_blueprint)
   for i = 1, count(character_blueprint) do
-    add_char_to_list(
-            character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
+    add_tile_to_list(
+            character_blueprint[i][1], character_blueprint[i][2], character_blueprint[i][3]
     )
   end
+end
+
+function _init_character_orientations()
+  if character_info_blueprint == nil or count(characters_to_draw) > count(character_info_blueprint) then
+    for i=1, count(characters_to_draw) do
+      initialize_moving_right(characters_to_draw[i])
+      characters_to_draw[i].char_speed = 0
+    end
+  end
+
+  for i = 1, count(characters_to_draw) do
+    characters_to_draw[i].char_speed = character_info_blueprint[i][2]
+    dir = character_info_blueprint[i][1]
+    if dir == "right" then
+      initialize_moving_right(characters_to_draw[i])
+    elseif dir == "left" then
+      initialize_moving_left(characters_to_draw[i])
+    elseif dir == "up" then
+      initialize_moving_up(characters_to_draw[i])
+    else
+      initialize_moving_down(characters_to_draw[i])
+    end
+  end
+
 end
 
 function _init_character_details()
@@ -72,9 +99,8 @@ end
 
 function _init_rotators(rotator_blueprint)
   for i = 1, count(rotator_blueprint) do
-    add_rotator_to_list(
+    add_tile_to_list(
       rotator_blueprint[i][1],
-      rotators_to_draw,
       rotator_blueprint[i][2],
       rotator_blueprint[i][3]
     )
@@ -83,9 +109,8 @@ end
 
 function _init_static_tiles(static_tile_blueprint)
   for i = 1, count(static_tile_blueprint) do
-    add_static_tile_to_list(
+    add_tile_to_list(
       static_tile_blueprint[i][1],
-      static_tiles_to_draw,
       static_tile_blueprint[i][2],
       static_tile_blueprint[i][3]
     )

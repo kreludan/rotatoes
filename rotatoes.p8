@@ -42,23 +42,50 @@ function _init_tiles()
     character_blueprint = decode_level_from_string(level_blueprints[level_num])["character_blueprint"]
     rotator_blueprint = decode_level_from_string(level_blueprints[level_num])["rotator_blueprint"]
     static_tile_blueprint = decode_level_from_string(level_blueprints[level_num])["static_tile_blueprint"]
+    character_info_blueprint = decode_level_from_string(level_blueprints[level_num])["character_info_blueprint"]
   else
     character_blueprint = level_blueprints[level_num]["character_blueprint"]
     rotator_blueprint = level_blueprints[level_num]["rotator_blueprint"]
     static_tile_blueprint = level_blueprints[level_num]["static_tile_blueprint"]
+    character_info_blueprint = nil
   end
 
   _init_characters(character_blueprint)
   _init_rotators(rotator_blueprint)
   _init_static_tiles(static_tile_blueprint)
+  _init_character_orientations()
 end
 
 function _init_characters(character_blueprint)
   for i = 1, count(character_blueprint) do
-    add_char_to_list(
-            character_blueprint[i][1], characters_to_draw, character_blueprint[i][2], character_blueprint[i][3]
+    add_tile_to_list(
+            character_blueprint[i][1], character_blueprint[i][2], character_blueprint[i][3]
     )
   end
+end
+
+function _init_character_orientations()
+  if character_info_blueprint == nil or count(characters_to_draw) > count(character_info_blueprint) then
+    for i=1, count(characters_to_draw) do
+      initialize_moving_right(characters_to_draw[i])
+      characters_to_draw[i].char_speed = 0
+    end
+  end
+
+  for i = 1, count(characters_to_draw) do
+    characters_to_draw[i].char_speed = character_info_blueprint[i][2]
+    dir = character_info_blueprint[i][1]
+    if dir == "right" then
+      initialize_moving_right(characters_to_draw[i])
+    elseif dir == "left" then
+      initialize_moving_left(characters_to_draw[i])
+    elseif dir == "up" then
+      initialize_moving_up(characters_to_draw[i])
+    else
+      initialize_moving_down(characters_to_draw[i])
+    end
+  end
+
 end
 
 function _init_character_details()
@@ -76,9 +103,8 @@ end
 
 function _init_rotators(rotator_blueprint)
   for i = 1, count(rotator_blueprint) do
-    add_rotator_to_list(
+    add_tile_to_list(
       rotator_blueprint[i][1],
-      rotators_to_draw,
       rotator_blueprint[i][2],
       rotator_blueprint[i][3]
     )
@@ -87,9 +113,8 @@ end
 
 function _init_static_tiles(static_tile_blueprint)
   for i = 1, count(static_tile_blueprint) do
-    add_static_tile_to_list(
+    add_tile_to_list(
       static_tile_blueprint[i][1],
-      static_tiles_to_draw,
       static_tile_blueprint[i][2],
       static_tile_blueprint[i][3]
     )
@@ -272,7 +297,7 @@ function _draw_ui_elements()
   rect(1, 1, 126, 126, 0)
 end
 -->8
---tiles
+--tile_operations
 function create_point(x, y, c)
   point = {}
   point.x = x
@@ -293,7 +318,7 @@ function create_point_w_0s(x, y, x0, y0, c)
   return point
 end
 
-function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, waypoints)
+function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, selectedspritestart_x, selectedspritestart_y, lockedspritestart_x, lockedspritestart_y, waypoints)
   local tile = {}
   tile.points = points
   tile.draw_points = {}
@@ -311,6 +336,8 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   tile.spritestart_y = spritestart_y
   tile.selectedspritestart_x = selectedspritestart_x
   tile.selectedspritestart_y = selectedspritestart_y
+  tile.lockedspritestart_x = lockedspritestart_x
+  tile.lockedspritestart_y = lockedspritestart_y
   tile.theta = 15
   tile.rotating = false
   tile.rotatedir = 0
@@ -326,11 +353,9 @@ function create_tile(points, center_x, center_y, spritestart_x, spritestart_y, s
   return tile
 end
 
-function cast_tile_to_char(tile, char_type, char_speed)
+function cast_tile_to_char(tile, char_type)
   tile.is_character = true
   tile.char_type = char_type
-  tile.char_speed = char_speed
-  tile.movement_dir = "right"
   return tile
 end
 
@@ -519,321 +544,16 @@ function translate_tile(tile, x_translate, y_translate)
   return tile
 end
 -->8
---rotators
-function add_rotator_to_list(rotator_type, rotators_list, x_origin, y_origin)
-  tile_to_prep = {}
-  if rotator_type == "l1" then
-    tile_to_prep = create_l1_tile()
-  elseif rotator_type == "l2" then
-    tile_to_prep = create_l2_tile()
-  elseif rotator_type == "l3" then
-    tile_to_prep = create_l3_tile()
-  elseif rotator_type == "l4" then
-    tile_to_prep = create_l4_tile()
-  elseif rotator_type == "horiz" then
-    tile_to_prep = create_horiz_tile()
-  elseif rotator_type == "vert" then
-    tile_to_prep = create_vert_tile()
-  elseif rotator_type == "plus" then
-    tile_to_prep = create_plus_tile()
-  else
-    return
-  end
-  add(
-    rotators_list,
-    create_drawable_tile(
-      tile_to_prep, x_origin,
-      y_origin
-    )
-  )
-end
-
-function create_cross_tile()
-  cross_points = create_cross_points()
-  cross_tile = create_tile(
-    cross_points, 2, 2, 0, 0, 0, 0
-  )
-  return cross_tile
-end
-
-function create_l1_tile()
-  l1_points = create_l1_points()
-  l1_tile = create_tile(
-    l1_points, 3, 8, 8, 0, 8, 17,
-    create_l1_waypoints()
-  )
-  return l1_tile
-end
-
-function create_l2_tile()
-  l2_points = create_l2_points()
-  l2_tile = create_tile(
-    l2_points, 8, 8, 20, 0, 20, 17,
-    create_l2_waypoints()
-  )
-  return l2_tile
-end
-
-function create_l3_tile()
-  l3_points = create_l3_points()
-  l3_tile = create_tile(
-    l3_points, 8, 3, 32, 0, 32, 17,
-    create_l3_waypoints()
-  )
-  return l3_tile
-end
-
-function create_l4_tile()
-  l4_points = create_l4_points()
-  l4_tile = create_tile(
-    l4_points, 3, 3, 44, 0, 44, 17,
-    create_l4_waypoints()
-  )
-  return l4_tile
-end
-
-function create_vert_tile()
-  vert_points = create_vert_points()
-  vert_tile = create_tile(
-    vert_points, 3, 8, 56, 0, 56, 17,
-    create_vert_waypoints()
-  )
-  return vert_tile
-end
-
-function create_horiz_tile()
-  horiz_points = create_horiz_points()
-  horiz_tile = create_tile(
-    horiz_points, 8, 3, 63, 0, 63, 17,
-    create_horiz_waypoints()
-  )
-  return horiz_tile
-end
-
-function create_plus_tile()
-  plus_points = create_plus_points()
-  plus_tile = create_tile(
-    plus_points, 8, 8, 80, 0, 80, 17,
-    create_plus_waypoints()
-  )
-  return plus_tile
-end
-
-function create_cross_points()
-  cross_points = {}
-  for i = 0, 4 do
-    if i != 2 then
-      add(
-        cross_points,
-        create_point(2, i, 1)
-      )
-    end
-  end
-  for i = 0, 4 do
-    add(
-      cross_points,
-      create_point(i, 2, 1)
-    )
-  end
-  return cross_points
-end
-
-function create_plus_waypoints()
-  return {
-    create_point(3, 8, 1),
-    create_point(8, 3, 1),
-    create_point(8, 8, 1),
-    create_point(8, 13, 1),
-    create_point(13, 8, 1)
-  }
-end
-
-function create_plus_points()
-  plus_points = {}
-  for y = 5, 11 do
-    for x = 0, 16 do
-      add(
-        plus_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  for x = 5, 11 do
-    for y = 0, 4 do
-      add(
-        plus_points,
-        create_point(x, y, 1)
-      )
-    end
-    for y = 12, 16 do
-      add(
-        plus_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return plus_points
-end
-
-function create_horiz_points()
-  horiz_points = {}
-  for y = 0, 6 do
-    for x = 0, 16 do
-      add(
-        horiz_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return horiz_points
-end
-
-function create_horiz_waypoints()
-  return {
-    create_point(3, 3, 1),
-    create_point(8, 3, 1),
-    create_point(13, 3, 1)
-  }
-end
-
-function create_vert_points()
-  vert_points = {}
-  for y = 0, 16 do
-    for x = 0, 6 do
-      add(
-        vert_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return vert_points
-end
-
-function create_vert_waypoints()
-  return {
-    create_point(3, 3, 1),
-    create_point(3, 8, 1),
-    create_point(3, 13, 1)
-  }
-end
-
-function create_l4_waypoints()
-  return {
-    create_point(3, 8, 1),
-    create_point(3, 3, 1),
-    create_point(8, 3, 1)
-  }
-end
-
-function create_l4_points()
-  l4_points = {}
-  for y = 0, 6 do
-    for x = 0, 11 do
-      add(
-        l4_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  for y = 7, 11 do
-    for x = 0, 6 do
-      add(
-        l4_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return l4_points
-end
-
-function create_l3_waypoints()
-  return {
-    create_point(3, 3, 1),
-    create_point(8, 3, 1),
-    create_point(8, 8, 1)
-  }
-end
-
-function create_l3_points()
-  l3_points = {}
-  for y = 0, 6 do
-    for x = 0, 11 do
-      add(
-        l3_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  for y = 7, 11 do
-    for x = 5, 11 do
-      add(
-        l3_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return l3_points
-end
-
-function create_l2_waypoints()
-  return {
-    create_point(3, 8, 1),
-    create_point(8, 8, 1),
-    create_point(8, 3, 1)
-  }
-end
-
-function create_l2_points()
-  l2_points = {}
-  for y = 0, 4 do
-    for x = 5, 11 do
-      add(
-        l2_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  for y = 5, 11 do
-    for x = 0, 11 do
-      add(
-        l2_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return l2_points
-end
-
-function create_l1_waypoints()
-  return {
-    create_point(3, 3, 1),
-    create_point(3, 8, 1),
-    create_point(8, 8, 1)
-  }
-end
-
-function create_l1_points()
-  l1_points = {}
-  for y = 0, 4 do
-    for x = 0, 6 do
-      add(
-        l1_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  for y = 5, 11 do
-    for x = 0, 11 do
-      add(
-        l1_points,
-        create_point(x, y, 1)
-      )
-    end
-  end
-  return l1_points
-end
--->8
---static_tiles
+--tile_creation
+rotator_blueprint_strings = {
+  l1 = "0,0:6,11|7,5:11,11-3,8-3,3|3,8|8,8-8,0-8,17-nil",
+  l2 = "0,5:4,11|5,0:11,11-8,8-3,8|8,8|8,3-20,0-20,17-nil",
+  l3 = "0,0:4,6|5,0:11,11-3,8-3,3|3,8|8,8-32,0-32,17-nil",
+  l4 = "0,0:6,11|7,0:11,6-3,3-3,8|3,3|8,3-44,0-44,17-nil",
+  vert = "0,0:6,16-3,8-3,3|3,8|3,13-56,0-56,17-nil",
+  horiz = "0,0:16,6-8,3-3,3|8,3|13,3-63,0-63,17-nil",
+  plus = "0,5:4,11|5,0:11,16|12,5:16,11-8,8-3,8|8,3|8,8|8,13|13,8-80,0-80,17-nil"
+}
 
 static_tile_blueprint_strings = {
   corrend_left = "0,0:6,6-3,3-3,3-97,0-nil-nil-nil",
@@ -849,8 +569,15 @@ static_tile_blueprint_strings = {
   corr_singleton = "0,0:6,6-3,3-3,3-97,24-nil-nil-nil",
 }
 
-function create_tile_blueprint_from_name(tile_name)
-  blueprint_strings = split(static_tile_blueprint_strings[tile_name], "-", false)
+character_blueprint_strings = {
+  enemy_basic = "0,0|0,2|0,4|1,1:1,3|2,2-1,2-nil-0,3-nil-nil-nil",
+  player = "0,0|0,2|0,4|1,1:1,3|2,2-1,2-nil-0,8-nil-nil-nil",
+  goal = "0,0:6,6-3,3-3,3-113,16-nil-nil-nil",
+  deathtile = "0,0:6,6-3,3-3,3-121,16-nil-nil-nil"
+}
+
+function create_tile_blueprint_from_name(tile_name, blueprint_string_set)
+  blueprint_strings = split(blueprint_string_set[tile_name], "-", false)
   return {
     name = tile_name,
     points = generate_point_list_from_blueprint(blueprint_strings[1]),
@@ -869,7 +596,7 @@ function generate_point_list_from_blueprint(blueprint_string)
   points_list = {}
   point_strings = split(blueprint_string, "|", false)
   for i=1, count(point_strings) do
-    if #point_strings[i] == 3 then
+    if #point_strings[i] < 7 then
       point_info = split(point_strings[i], ",", true)
       add(points_list, create_point(point_info[1], point_info[2], 1))
     else
@@ -896,57 +623,39 @@ function generate_xy_struct_from_blueprint(blueprint_string)
   return {x = xy_values[1], y = xy_values[2]}
 end
 
-function add_static_tile_to_list(statictile_type, statictile_list, x_origin, y_origin)
-  tile_index = 1
-  tile_info = create_tile_blueprint_from_name(statictile_type)
+function add_tile_to_list(tile_type, x_origin, y_origin)
+  list_info = determine_list_to_add_to_and_search(tile_type)
+  blueprint_strings = list_info[1]
+  list_to_add_to = list_info[2]
+  tile_info = create_tile_blueprint_from_name(tile_type, blueprint_strings)
+  if tile_info.spritestart_locked == nil then
+    tile_info.spritestart_locked = { x = tile_info.spritestart_general.x, y = tile_info.spritestart_general.y }
+  end
+  if tile_info.spritestart_selected == nil then
+    tile_info.spritestart_selected = { x = tile_info.spritestart_general.x, y = tile_info.spritestart_general.y }
+  end
   tile_to_prep = create_tile(
           tile_info.points, tile_info.center.x, tile_info.center.y, tile_info.spritestart_general.x,
-          tile_info.spritestart_general.y, nil, nil, tile_info.waypoints)
-  add(statictile_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
-end
-
-function create_square_tile(spritestart_x, spritestart_y)
-  square_points = create_square_points()
-  square_tile = create_tile(
-    square_points, 3, 3,
-    spritestart_x, spritestart_y,
-    spritestart_x, spritestart_y,
-    create_square_waypoints()
-  )
-  return square_tile
-end
-
-function create_square_waypoints()
-  return { create_point(3, 3, 1) }
-end
-
-function create_square_points()
-  square_points = {}
-  for x = 0, 6 do
-    for y = 0, 6 do
-      add(
-        square_points,
-        create_point(x, y, 1)
-      )
-    end
+          tile_info.spritestart_general.y, tile_info.spritestart_selected.x, tile_info.spritestart_selected.y,
+          tile_info.spritestart_locked.x, tile_info.spritestart_locked.y, tile_info.waypoints)
+  if list_to_add_to == characters_to_draw then
+    cast_tile_to_char(tile_to_prep, tile_type)
   end
-  return square_points
+  add(list_to_add_to, create_drawable_tile(tile_to_prep, x_origin, y_origin))
+end
+
+function determine_list_to_add_to_and_search(tile_type)
+  if static_tile_blueprint_strings[tile_type] != nil then
+    return {static_tile_blueprint_strings, static_tiles_to_draw}
+  elseif character_blueprint_strings[tile_type] != nil then
+    return {character_blueprint_strings, characters_to_draw}
+  else
+    print("buh")
+    return {rotator_blueprint_strings, rotators_to_draw}
+  end
 end
 -->8
---characters
-function add_char_to_list(char_type, char_list, x_origin, y_origin)
-  if char_type == "player" then
-    tile_to_prep = create_player()
-  elseif char_type == "goal" then
-    tile_to_prep = create_goal()
-  elseif char_type == "deathtile" then
-    tile_to_prep = create_deathtile()
-  elseif char_type == "enemy_basic" then
-    tile_to_prep = create_enemy_basic()
-  end
-  add(char_list, create_drawable_tile(tile_to_prep, x_origin, y_origin))
-end
-
+--character_movement
 function get_starting_waypoint(char, waypoints)
   for i=1, count(waypoints) do
     if char.center_x == waypoints[i].draw_waypoint.x and char.center_y == waypoints[i].draw_waypoint.y then
@@ -1127,6 +836,43 @@ function get_unitvector_ahead(char)
   return x_ahead, y_ahead
 end
 
+function initialize_moving_right(char)
+  char.movement_dir = "right"
+end
+
+function initialize_moving_left(char)
+  char.movement_dir = "left"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    char.draw_points[i].x = (x_origin*2) - char.draw_points[i].x
+    char.draw_points[i].y = (y_origin*2) - char.draw_points[i].y
+  end
+end
+
+function initialize_moving_up(char)
+  char.movement_dir = "up"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x - char.center_x
+    zeroed_y = char.draw_points[i].y - char.center_y
+    char.draw_points[i].x = zeroed_y  + char.center_x
+    char.draw_points[i].y = (zeroed_x * -1) + char.center_y
+  end
+end
+
+function initialize_moving_down(char)
+  char.movement_dir = "up"
+  x_origin = char.center_x
+  y_origin = char.center_y
+  for i=1,count(char.draw_points) do
+    zeroed_x = char.draw_points[i].x - char.center_x
+    zeroed_y = char.draw_points[i].y - char.center_y
+    char.draw_points[i].x = (zeroed_y * -1)  + char.center_x
+    char.draw_points[i].y = zeroed_x + char.center_y
+  end
+end
 
 function turn_counterclockwise(char)
   turn_movement_counterclockwise(char)
@@ -1216,41 +962,65 @@ function move_character(char)
     return char
   end
 end
-
-function create_player()
-  player_points = create_player_points()
-  player_tile = create_tile(player_points, 2, 2, 0, 8, 0, 8, nil)
-  return cast_tile_to_char(player_tile, "player", 1)
+-->8
+--levels
+function decode_level_from_string(level_string)
+    blueprint_strings = split(level_string, "-", true)
+    return {
+        level_num = blueprint_strings[1],
+        character_blueprint = construct_blueprint_from_string(blueprint_strings[2]),
+        rotator_blueprint = construct_blueprint_from_string(blueprint_strings[3]),
+        static_tile_blueprint = construct_blueprint_from_string(blueprint_strings[4]),
+        character_info_blueprint = construct_blueprint_from_string(blueprint_strings[5])
+    }
 end
 
-function create_enemy_basic()
-  basic_enemy_points = create_player_points()
-  basic_enemy_tile = create_tile(basic_enemy_points, 2, 2, 0, 3, 0, 3, nil)
-  return cast_tile_to_char(basic_enemy_tile, "enemy_basic", 1)
+function construct_blueprint_from_string(blueprint_string)
+    blueprint = {}
+    tile_infos = split(blueprint_string, '|', false)
+    for i=1,count(tile_infos) do
+        add(blueprint, split(tile_infos[i], ',', true))
+    end
+    return blueprint
 end
 
-function create_goal()
-  goal_points = create_square_points()
-  goal_tile = create_tile(goal_points, 3, 3, 113, 16, 113, 16, nil)
-  return cast_tile_to_char(goal_tile, "goal", 0)
-end
+level_blueprints = {
+    "1-goal,104,63|player,48,63-plus,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63-right,0|left,1",
+    "2-deathtile,76,70|deathtile,76,32|deathtile,57,89|goal,95,51|player,31,70-vert,57,70|l2,76,51-corrend_left,31,70|corr_horiz,38,70|corrend_right,45,70|corr_singleton,69,70|corr_singleton,76,70|corr_singleton,57,82|corr_singleton,57,89|corrend_down,57,58|corr_turn_upleft,57,51|corrend_right,64,51|corr_singleton,76,39|corr_singleton,76,32|corr_singleton,88,51|corr_singleton,95,51-left,0|left,0|left,0|left,0|right,1",    "3-goal,104,63|enemy_basic,90,63|player,22,63-horiz,48,63|horiz,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_left,48,75|corr_horiz,55,75|corr_horiz,62,75|corr_horiz,69,75|corr_horiz,76,75|corrend_right,78,75|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63-left,0|left,1|left,1",
+    "4-goal,83,28|enemy_basic,40,47|player,40,85-horiz,45,85|plus,59,47|horiz,83,47-corrend_down,45,73|corr_turn_upleft,45,66|corr_horiz,52,66|corr_turn_downright,59,66|corrend_up,59,59|corrend_right,47,47|corrend_left,40,47|corrend_down,59,35|corrend_up,59,28|corr_singleton,71,47|corr_singleton,83,35|corr_singleton,83,28-right,0|left,1|right,1",
+    "1-goal,104,63|player,48,63-plus,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63-right,0|right,1",
+    {level_num = 11,
+     character_blueprint = {
+         {"goal", 104, 63 },
+         {"player", 22, 63 },
+     },
+     rotator_blueprint = {
+         { "horiz", 48, 63 },
+         { "horiz", 78, 63 }
+     },
+     static_tile_blueprint = {
+         { "corrend_left", 22, 63 },
+         { "corr_horiz", 29, 63 },
+         { "corrend_right", 36, 63 },
+         { "corrend_left", 60, 63 },
+         { "corrend_left", 48, 75},
+         { "corrend_right", 78, 75},
+         { "corrend_right", 66, 63 },
+         { "corrend_left", 90, 63},
+         { "corrend_right", 97, 63 },
+         { "corrend_right", 104, 63 }
+     }},
+}
 
-function create_deathtile()
-  deathtile_points = create_square_points()
-  death_tile = create_tile(deathtile_points, 3, 3, 121, 16, 121, 16, nil)
-  return cast_tile_to_char(death_tile, "deathtile", 0)
-end
-
-function create_player_points()
-  player_points={}
-  add(player_points, create_point(0,0,1))
-  add(player_points, create_point(1,1,1))
-  add(player_points, create_point(0,2,1))
-  add(player_points, create_point(1,2,1))
-  add(player_points, create_point(2,2,1))
-  add(player_points, create_point(1,3,1))
-  add(player_points, create_point(0,4,1))
-  return player_points
+function draw_level_text()
+    if level_num == 1 then
+        sspr(0, 16, 8, 5, 39, 37)
+        sspr(0, 24, 8, 5, 50, 37)
+        print("rotate", 38, 45, 0)
+        sspr(0, 30, 5, 7, 72, 36)
+        sspr(6, 30, 5, 7, 80, 36)
+        print("swap", 71, 45, 0)
+    end
 end
 -->8
 --menu
@@ -1355,72 +1125,6 @@ function generate_lose_menu(option_selected)
   print("x", 38, y_locations[option_selected], x_colors[option_selected])
 end
 -->8
---levels
-function decode_level_from_string(level_string)
-    blueprint_strings = split(level_string, "-", true)
-    return {
-        level_num = blueprint_strings[1],
-        character_blueprint = construct_blueprint_from_string(blueprint_strings[2]),
-        rotator_blueprint = construct_blueprint_from_string(blueprint_strings[3]),
-        static_tile_blueprint = construct_blueprint_from_string(blueprint_strings[4])
-    }
-end
-
-function construct_blueprint_from_string(blueprint_string)
-    blueprint = {}
-    tile_infos = split(blueprint_string, '|', false)
-    for i=1,count(tile_infos) do
-        add(blueprint, split(tile_infos[i], ',', true))
-    end
-    return blueprint
-end
-
-level_blueprints = {
-    "1-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "2-deathtile,76,70|deathtile,76,32|deathtile,57,89|goal,95,51|player,31,70-vert,57,70|l2,76,51-corrend_left,31,70|corr_horiz,38,70|corrend_right,45,70|corr_singleton,69,70|corr_singleton,76,70|corr_singleton,57,82|corr_singleton,57,89|corrend_down,57,58|corr_turn_upleft,57,51|corrend_right,64,51|corr_singleton,76,39|corr_singleton,76,32|corr_singleton,88,51|corr_singleton,95,51",
-    "3-goal,104,63|enemy_basic,90,63|player,22,63-horiz,48,63|horiz,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_left,48,75|corr_horiz,55,75|corr_horiz,62,75|corr_horiz,69,75|corr_horiz,76,75|corrend_right,78,75|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "4-goal,83,28|enemy_basic,40,47|player,40,85-horiz,45,85|plus,59,47|horiz,83,47-corrend_down,45,73|corr_turn_upleft,45,66|corr_horiz,52,66|corr_turn_downright,59,66|corrend_up,59,59|corrend_right,47,47|corrend_left,40,47|corrend_down,59,35|corrend_up,59,28|corr_singleton,71,47|corr_singleton,83,35|corr_singleton,83,28",
-    "5-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "6-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "7-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "8-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "9-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "10-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    "11-goal,104,63|player,22,63-vert,48,63|vert,78,63-corrend_left,22,63|corr_horiz,29,63|corrend_right,36,63|corrend_left,60,63|corrend_right,66,63|corrend_left,90,63|corrend_right,97,63|corrend_right,104,63",
-    {level_num = 11,
-     character_blueprint = {
-         {"goal", 104, 63 },
-         {"player", 22, 63 },
-     },
-     rotator_blueprint = {
-         { "horiz", 48, 63 },
-         { "horiz", 78, 63 }
-     },
-     static_tile_blueprint = {
-         { "corrend_left", 22, 63 },
-         { "corr_horiz", 29, 63 },
-         { "corrend_right", 36, 63 },
-         { "corrend_left", 60, 63 },
-         { "corrend_left", 48, 75},
-         { "corrend_right", 78, 75},
-         { "corrend_right", 66, 63 },
-         { "corrend_left", 90, 63},
-         { "corrend_right", 97, 63 },
-         { "corrend_right", 104, 63 }
-     }},
-}
-
-function draw_level_text()
-    if level_num == 1 then
-        sspr(0, 16, 8, 5, 39, 37)
-        sspr(0, 24, 8, 5, 50, 37)
-        print("rotate", 38, 45, 0)
-        sspr(0, 30, 5, 7, 72, 36)
-        sspr(6, 30, 5, 7, 80, 36)
-        print("swap", 71, 45, 0)
-    end
-end
--->8
 --system
 local system
 
@@ -1460,6 +1164,16 @@ function adjust_for_colorblindness()
     map()
 end
 -->8
+--level_select
+function generate_level_select()
+    rectfill(26, 65, 99, 85, 0)
+    rect(26, 65, 99, 85, 7)
+end
+
+function handle_level_select_input()
+
+end
+-->8
 --save_data
 function get_furthest_level()
     if dget(0) == nil then return 1 end
@@ -1473,16 +1187,6 @@ function update_furthest_level(level_number)
 end
 
 -- settings: (1) colorblind mode (2) game speed (3) clear save [clear furthest level]
--->8
---level_select
-function generate_level_select()
-    rectfill(26, 65, 99, 85, 0)
-    rect(26, 65, 99, 85, 7)
-end
-
-function handle_level_select_input()
-
-end
 __gfx__
 ffffffff5555555ffffffffff5555555555555555555555555555555555555555555555555555555fffff5555555fffff6666666f6666666f6777776f6666666
 ffffffff5777775ffffffffff5777775577777777775577777777775577777557777777777777775fffff5777775fffff6777777f7777777f6777776f7777776
