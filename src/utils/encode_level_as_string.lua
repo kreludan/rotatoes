@@ -32,19 +32,35 @@ function build_blueprint_string(blueprint)
     return blueprint_string
 end
 
-level = {level_num = 1,
+level = {level_num = 2,
          character_blueprint = {
-             {"goal", 88, 64, "right", 0},
-             {"player", 40, 64, "right", 1}
+             {"goal", 85, 64, "right", 0},
+             {"player", 31, 64, "right", 1}
          },
          rotator_blueprint = {
-             { "horiz", 64, 64 },
+             { "horiz", 31, 64 },
+             { "vert", 61, 64 },
          },
          static_tile_blueprint = {
-             { "corrend_left", 40, 64 },
-             { "corrend_right", 49, 64 },
-             { "corr_singleton", 79, 64 },
-             { "corr_singleton", 88, 64 }
+             { "corr_singleton", 46, 64 },
+             { "corr_singleton", 76, 64 },
+             { "corr_singleton", 85, 64 }
          }}
 
 print(encode_level_as_string(level))
+
+
+level1 = {level_num = 1,
+          character_blueprint = {
+              {"goal", 85, 64, "right", 0},
+              {"player", 37, 64, "right", 1}
+          },
+          rotator_blueprint = {
+              { "vert", 61, 64 },
+          },
+          static_tile_blueprint = {
+              { "corrend_left", 37, 64 },
+              { "corrend_right", 46, 64 },
+              { "corr_singleton", 76, 64 },
+              { "corr_singleton", 85, 64 }
+          }}
