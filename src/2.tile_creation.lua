@@ -1,32 +1,34 @@
 rotator_blueprint_strings = {
-  l1 = "0,0:6,11|7,5:11,11-3,8-3,3|3,8|8,8-8,0-8,17-nil",
-  l2 = "0,5:4,11|5,0:11,11-8,8-3,8|8,8|8,3-20,0-20,17-nil",
-  l3 = "0,0:4,6|5,0:11,11-3,8-3,3|3,8|8,8-32,0-32,17-nil",
-  l4 = "0,0:6,11|7,0:11,6-3,3-3,8|3,3|8,3-44,0-44,17-nil",
-  vert = "0,0:6,16-3,8-3,3|3,8|3,13-56,0-56,17-nil",
-  horiz = "0,0:16,6-8,3-3,3|8,3|13,3-63,0-63,17-nil",
-  plus = "0,5:4,11|5,0:11,16|12,5:16,11-8,8-3,8|8,3|8,8|8,13|13,8-80,0-80,17-nil"
+  l1 = "0,0:8,15|9,7:15,15-4,11-4,4|4,11|11,11-32,10-32,27-32,44",
+  l2 = "0,0:8,15|9,0:15,8-4,4-4,11|4,4|11,4-49,10-49,27-49,44",
+  l3 = "0,0:6,8|7,0:15,15-11,4-4,4|11,4|11,11-66,10-66,27-66,44",
+  l4 = "0,7:6,15|7,0:15,15-11,11-4,11|11,11|11,4-83,10-83,27-83,44",
+  plus = "0,7:6,15|7,0:15,22|16,7:22,15-11,11-4,11|11,4|11,11|11,18|18,11-100,10-100,34-100,58",
+  horiz = "0,0:20,8-10,4-4,4|10,4|16,4-0,10-0,20-0,30",
+  vert = "0,0:8,20-4,10-4,4|4,10|4,16-22,10-22,32-12,40"
 }
 
 static_tile_blueprint_strings = {
-  corrend_left = "0,0:6,6-3,3-3,3-97,0-nil-nil-nil",
-  corrend_right = "0,0:6,6-3,3-3,3-121,0-nil-nil-nil",
-  corrend_up = "0,0:6,6-3,3-3,3-97,16-nil-nil-nil",
-  corrend_down = "0,0:6,6-3,3-3,3-105,16-nil-nil-nil",
-  corr_horiz = "0,0:6,6-3,3-3,3-105,0-nil-nil-nil",
-  corr_vert = "0,0:6,6-3,3-3,3-113,0-nil-nil-nil",
-  corr_turn_upleft = "0,0:6,6-3,3-3,3-97,8-nil-nil-nil",
-  corr_turn_upright = "0,0:6,6-3,3-3,3-121,8-nil-nil-nil",
-  corr_turn_downleft = "0,0:6,6-3,3-3,3-105,8-nil-nil-nil",
-  corr_turn_downright = "0,0:6,6-3,3-3,3-113,8-nil-nil-nil",
-  corr_singleton = "0,0:6,6-3,3-3,3-97,24-nil-nil-nil",
+  corr_singleton = "0,0:8,8-4,4-4,4-0,0-nil-nil",
+  corrend_left = "0,0:8,8-4,4-4,4-10,0-nil-nil",
+  corrend_up = "0,0:8,8-4,4-4,4-20,0-nil-nil",
+  corrend_right = "0,0:8,8-4,4-4,4-30,0-nil-nil",
+  corrend_down = "0,0:8,8-4,4-4,4-40,0-nil-nil",
+  corr_turn_downleft = "0,0:8,8-4,4-4,4-50,0-nil-nil",
+  corr_turn_upleft = "0,0:8,8-4,4-4,4-60,0-nil-nil",
+  corr_turn_upright = "0,0:8,8-4,4-4,4-70,0-nil-nil",
+  corr_turn_downright = "0,0:8,8-4,4-4,4-80,0-nil-nil",
+  corr_horiz = "0,0:8,8-4,4-4,4-90,0-nil-nil",
+  corr_vert = "0,0:8,8-4,4-4,4-100,0-nil-nil"
 }
 
 character_blueprint_strings = {
-  enemy_basic = "0,0|0,2|0,4|1,1:1,3|2,2-1,2-nil-0,3-nil-nil-nil",
-  player = "0,0|0,2|0,4|1,1:1,3|2,2-1,2-nil-0,8-nil-nil-nil",
-  goal = "0,0:6,6-3,3-3,3-113,16-nil-nil-nil",
-  deathtile = "0,0:6,6-3,3-3,3-121,16-nil-nil-nil"
+  goal = "0,0:8,8-4,4-4,4-110,0-nil-nil",
+  deathtile = "0,0:8,8-4,4-4,4-119,0-nil-nil",
+  player = "0,2:5,2|3,0|4,1|4,3|3,4-2,2-nil-0,123-nil-nil",
+  enemy_basic = "0,2:3,2|1,0|2,1|2,3|1,4-2,2-nil-7,123-nil-nil",
+  tilelocker_enemy = "0,2:3,2|2,0|3,1|3,3|2,4-1,2-nil-12,123-nil-nil",
+  stopstart_enemy = "0,0:0,4|1,2:3,2|2,1|2,3-1,2-nil-17,123-nil-nil"
 }
 
 function create_tile_blueprint_from_name(tile_name, blueprint_string_set)
@@ -103,7 +105,6 @@ function determine_list_to_add_to_and_search(tile_type)
   elseif character_blueprint_strings[tile_type] != nil then
     return {character_blueprint_strings, characters_to_draw}
   else
-    print("buh")
     return {rotator_blueprint_strings, rotators_to_draw}
   end
 end
