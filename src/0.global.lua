@@ -2,7 +2,7 @@
 function _init()
   system_init()
   cartdata("rotato_save")
-  max_distance = 7 -- distance to check for a waypoint in a direction
+  max_distance = 9 -- distance to check for a waypoint in a direction
   level_state = "menu" -- "playing", "win", "lose", "menu", "level_select"
   in_game_menu_option = -1
   main_menu_option = 1
