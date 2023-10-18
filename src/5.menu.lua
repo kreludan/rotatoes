@@ -45,9 +45,9 @@ function handle_win_menu_input()
     in_game_menu_option = min(3, in_game_menu_option+1)
   elseif btnp(❎) or btnp(🅾️) then
     if in_game_menu_option == 1 then
+      level_num = min(count(level_blueprints), level_num + 1)
       _init_level(level_num)
     elseif in_game_menu_option == 2 then
-      level_num -= 1
       _init_level(level_num)
     else
       init_main_menu()

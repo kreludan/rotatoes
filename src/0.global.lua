@@ -153,7 +153,6 @@ function _handlecharcollisions()
     level_player.draw_points[i].y == level_goal.center_y then
       in_game_menu_option = 1
       level_state = "win"
-      level_num = min(count(level_blueprints), level_num + 1)
     end
 
     for j=1, count(level_enemies) do

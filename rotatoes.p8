@@ -157,7 +157,6 @@ function _handlecharcollisions()
     level_player.draw_points[i].y == level_goal.center_y then
       in_game_menu_option = 1
       level_state = "win"
-      level_num = min(count(level_blueprints), level_num + 1)
     end
 
     for j=1, count(level_enemies) do
@@ -988,6 +987,7 @@ end
 level_blueprints = {
     "1-goal,85,64|player,37,64-vert,61,64-corrend_left,37,64|corrend_right,46,64|corr_singleton,76,64|corr_singleton,85,64-right,0|right,1",
     "2-goal,85,64|player,31,64-horiz,31,64|vert,61,64-corr_singleton,46,64|corr_singleton,76,64|corr_singleton,85,64-right,0|right,1",
+    "3-goal,99,64|enemy_basic,90,64|player,21,64-horiz,45,64|horiz,75,64-corrend_left,21,64|corrend_right,30,64|corr_singleton,60,64|corr_singleton,90,64|corr_singleton,99,64|corrend_left,45,79|corr_horiz,54,79|corr_horiz,63,79|corr_horiz,72,79|corrend_right,75,79-right,0|left,1|right,1"
 }
 
 function draw_level_text()
@@ -1046,9 +1046,9 @@ function handle_win_menu_input()
     in_game_menu_option = min(3, in_game_menu_option+1)
   elseif btnp(❎) or btnp(🅾️) then
     if in_game_menu_option == 1 then
+      level_num = min(count(level_blueprints), level_num + 1)
       _init_level(level_num)
     elseif in_game_menu_option == 2 then
-      level_num -= 1
       _init_level(level_num)
     else
       init_main_menu()
@@ -1288,7 +1288,7 @@ fffffffffffffffffffffffffffff57077770770770777000770770770700007700775fffffffff6
 fffffffffffffffffffffffffffff57077770770770770770770770770707777777075fffffffff6777787770777b77776fffffffff6711111170799999976ff
 fff0ffff8fffff2ffefffffffffff57077770770770770770770770770707777777075fffffffff677787777777b7b7776fffffffff6771777777777779776ff
 ffff0ffff8fffff2fefefffffffff57077777007777077000777077007770007000775fffffffff67787777777b777b776fffffffff6777177777777797776ff
-000000f8888f2222feeeeffffffff57777777777777777777777777777777777777775fffffffff67788888777b777b776fffffffff6777777777777777776ff
+f00000f8888f2222feeeeffffffff57777777777777777777777777777777777777775fffffffff67788888777b777b776fffffffff6777777777777777776ff
 ffff0ffff8fffff2fefefffffffff55777777777777777777777777777777777777755fffffffff6677777777777777766fffffffff6677777777777777766ff
 fff0ffff8fffff2ffeffffffffffff555555555555555555555555555555555555555fffffffffff66666666666666666fffffffffff66666666666666666fff
 

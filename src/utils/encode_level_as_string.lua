@@ -32,23 +32,28 @@ function build_blueprint_string(blueprint)
     return blueprint_string
 end
 
-level = {level_num = 2,
+level = {level_num = 3,
          character_blueprint = {
-             {"goal", 85, 64, "right", 0},
-             {"player", 31, 64, "right", 1}
+             {"goal", 99, 64, "right", 0},
+             {"enemy_basic", 90, 64, "left", 1},
+             {"player", 21, 64, "right", 1}
          },
          rotator_blueprint = {
-             { "horiz", 31, 64 },
-             { "vert", 61, 64 },
+             { "horiz", 45, 64 },
+             { "horiz", 75, 64 },
          },
          static_tile_blueprint = {
-             { "corr_singleton", 46, 64 },
-             { "corr_singleton", 76, 64 },
-             { "corr_singleton", 85, 64 }
+             { "corrend_left", 21, 64 },
+             { "corrend_right", 30, 64 },
+             { "corr_singleton", 60, 64 },
+             { "corr_singleton", 90, 64 },
+             { "corr_singleton", 99, 64 },
+             { "corrend_left", 45, 79 },
+             { "corr_horiz", 54, 79 },
+             { "corr_horiz", 63, 79 },
+             { "corr_horiz", 72, 79 },
+             { "corrend_right", 75, 79 }
          }}
-
-print(encode_level_as_string(level))
-
 
 level1 = {level_num = 1,
           character_blueprint = {
@@ -64,3 +69,23 @@ level1 = {level_num = 1,
               { "corr_singleton", 76, 64 },
               { "corr_singleton", 85, 64 }
           }}
+
+
+level2 = {level_num = 2,
+         character_blueprint = {
+             {"goal", 85, 64, "right", 0},
+             {"player", 31, 64, "right", 1}
+         },
+         rotator_blueprint = {
+             { "horiz", 31, 64 },
+             { "vert", 61, 64 },
+         },
+         static_tile_blueprint = {
+             { "corr_singleton", 46, 64 },
+             { "corr_singleton", 76, 64 },
+             { "corr_singleton", 85, 64 }
+         }}
+
+levels = {level1, level2}
+
+print(encode_level_as_string(level))
