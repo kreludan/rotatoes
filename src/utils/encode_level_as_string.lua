@@ -36,16 +36,19 @@ level = {level_num = 5,
          character_blueprint = {
              {"goal", 101, 60, "right", 0},
              {"enemy_basic", 92, 60, "left", 1},
-             {"enemy_basic", 69, 60, "left", 1},
-             {"player", 19, 87, "right", 1}
+             {"enemy_basic", 42, 67, "up", 1},
+             {"player", 53, 78, "left", 1}
          },
          rotator_blueprint = {
              { "plus", 42, 60 },
              { "plus", 76, 60 },
          },
          static_tile_blueprint = {
-             {"corrend_down", 19, 87 },
-             {"corr_vert", 19, 78},
+             {"corrend_right", 53, 78},
+             {"corr_horiz", 46, 78},
+             {"corr_horiz", 37, 78},
+             {"corr_horiz", 28, 78},
+             {"corr_turn_downleft", 19, 78},
              {"corr_vert", 19, 69},
              {"corrend_right", 26, 60},
              {"corr_turn_upleft", 19, 60},
