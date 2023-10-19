@@ -8,7 +8,7 @@ function _init()
   main_menu_option = 1
   level_select_option = 1
   global_game_speed = 1
-  level_num = 4 -- current level
+  level_num = 1 -- current level
   furthest_level_unlocked = get_furthest_level()
 end
 
@@ -31,6 +31,11 @@ function _init_level(level_num)
   _init_tiles()
   _init_waypoints()
   _init_character_details()
+
+  for i = 1,5 do
+    flip()
+    _draw_ui_elements()
+  end
 end
 
 function _init_tiles()
@@ -47,9 +52,9 @@ function _init_tiles()
   end
 
   _init_characters(character_blueprint)
+  _init_character_orientations()
   _init_rotators(rotator_blueprint)
   _init_static_tiles(static_tile_blueprint)
-  _init_character_orientations()
 end
 
 function _init_characters(character_blueprint)
