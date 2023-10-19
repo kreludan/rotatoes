@@ -12,7 +12,7 @@ function _init()
   main_menu_option = 1
   level_select_option = 1
   global_game_speed = 1
-  level_num = 1 -- current level
+  level_num = 4 -- current level
   furthest_level_unlocked = get_furthest_level()
 end
 
@@ -863,7 +863,7 @@ function initialize_moving_up(char)
 end
 
 function initialize_moving_down(char)
-  char.movement_dir = "up"
+  char.movement_dir = "down"
   x_origin = char.center_x
   y_origin = char.center_y
   for i=1,count(char.draw_points) do
@@ -987,7 +987,8 @@ end
 level_blueprints = {
     "1-goal,85,64|player,37,64-vert,61,64-corrend_left,37,64|corrend_right,46,64|corr_singleton,76,64|corr_singleton,85,64-right,0|right,1",
     "2-goal,85,64|player,31,64-horiz,31,64|vert,61,64-corr_singleton,46,64|corr_singleton,76,64|corr_singleton,85,64-right,0|right,1",
-    "3-goal,99,64|enemy_basic,90,64|player,21,64-horiz,45,64|horiz,75,64-corrend_left,21,64|corrend_right,30,64|corr_singleton,60,64|corr_singleton,90,64|corr_singleton,99,64|corrend_left,45,79|corr_horiz,54,79|corr_horiz,63,79|corr_horiz,72,79|corrend_right,75,79-right,0|left,1|right,1"
+    "3-goal,99,64|enemy_basic,90,64|player,21,64-horiz,45,64|horiz,75,64-corrend_left,21,64|corrend_right,30,64|corr_singleton,60,64|corr_singleton,90,64|corr_singleton,99,64|corrend_left,45,79|corr_horiz,54,79|corr_horiz,63,79|corr_horiz,72,79|corrend_right,75,79-right,0|left,1|right,1",
+    "4-goal,84,30|enemy_basic,60,82|enemy_basic,60,30|player,29,61-vert,29,61|plus,60,61|horiz,60,30-corr_singleton,44,61|corrend_left,76,61|corrend_right,81,61|corrend_up,60,77|corrend_down,60,82|corr_singleton,60,45|corr_singleton,75,30|corr_singleton,84,30-right,0|right,1|right,1|right,1"
 }
 
 function draw_level_text()

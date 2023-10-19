@@ -32,27 +32,27 @@ function build_blueprint_string(blueprint)
     return blueprint_string
 end
 
-level = {level_num = 3,
+level = {level_num = 4,
          character_blueprint = {
-             {"goal", 99, 64, "right", 0},
-             {"enemy_basic", 90, 64, "left", 1},
-             {"player", 21, 64, "right", 1}
+             {"goal", 84, 30, "right", 0},
+             {"enemy_basic", 60, 82, "right", 1},
+             {"enemy_basic", 60, 30, "right", 1},
+             {"player", 29, 61, "right", 1}
          },
          rotator_blueprint = {
-             { "horiz", 45, 64 },
-             { "horiz", 75, 64 },
+             { "vert", 29, 61 },
+             { "plus", 60, 61 },
+             { "horiz", 60, 30}
          },
          static_tile_blueprint = {
-             { "corrend_left", 21, 64 },
-             { "corrend_right", 30, 64 },
-             { "corr_singleton", 60, 64 },
-             { "corr_singleton", 90, 64 },
-             { "corr_singleton", 99, 64 },
-             { "corrend_left", 45, 79 },
-             { "corr_horiz", 54, 79 },
-             { "corr_horiz", 63, 79 },
-             { "corr_horiz", 72, 79 },
-             { "corrend_right", 75, 79 }
+             {"corr_singleton", 44, 61},
+             {"corrend_left", 76, 61 },
+             {"corrend_right", 81, 61 },
+             {"corrend_up", 60, 77},
+             {"corrend_down", 60, 82 },
+             {"corr_singleton", 60, 45},
+             {"corr_singleton", 75, 30},
+             {"corr_singleton", 84, 30}
          }}
 
 level1 = {level_num = 1,
@@ -86,6 +86,58 @@ level2 = {level_num = 2,
              { "corr_singleton", 85, 64 }
          }}
 
-levels = {level1, level2}
+level3 = {level_num = 3,
+          character_blueprint = {
+              {"goal", 99, 64, "right", 0},
+              {"enemy_basic", 90, 64, "left", 1},
+              {"player", 21, 64, "right", 1}
+          },
+          rotator_blueprint = {
+              { "horiz", 45, 64 },
+              { "horiz", 75, 64 },
+          },
+          static_tile_blueprint = {
+              { "corrend_left", 21, 64 },
+              { "corrend_right", 30, 64 },
+              { "corr_singleton", 60, 64 },
+              { "corr_singleton", 90, 64 },
+              { "corr_singleton", 99, 64 },
+              { "corrend_left", 45, 79 },
+              { "corr_horiz", 54, 79 },
+              { "corr_horiz", 63, 79 },
+              { "corr_horiz", 72, 79 },
+              { "corrend_right", 75, 79 }
+          }}
+
+unused_level_1 = {level_num = 4,
+                  character_blueprint = {
+                      {"goal", 96, 30, "right", 0},
+                      {"enemy_basic", 60, 45, "right", 1},
+                      {"enemy_basic", 72, 30, "right", 1},
+                      {"player", 35, 94, "right", 1}
+                  },
+                  rotator_blueprint = {
+                      { "horiz", 35, 94 },
+                      { "plus", 60, 61 },
+                      { "horiz", 72, 30}
+                      --{ "horiz", 75, 64 },
+                  },
+                  static_tile_blueprint = {
+                      {"corrend_down", 35, 79},
+                      {"corr_vert", 35, 70 },
+                      {"corr_turn_upleft", 35, 61},
+                      {"corrend_right", 44, 61},
+                      {"corrend_left", 76, 61 },
+                      {"corrend_right", 81, 61 },
+                      {"corrend_up", 60, 77},
+                      {"corrend_down", 60, 82 },
+                      {"corrend_left", 60, 45},
+                      {"corr_horiz", 69, 45},
+                      {"corrend_right", 72, 45},
+                      {"corr_singleton", 87, 30},
+                      {"corr_singleton", 96, 30}
+                  }}
+
+levels = {level1, level2, level3}
 
 print(encode_level_as_string(level))

@@ -205,7 +205,7 @@ function initialize_moving_up(char)
 end
 
 function initialize_moving_down(char)
-  char.movement_dir = "up"
+  char.movement_dir = "down"
   x_origin = char.center_x
   y_origin = char.center_y
   for i=1,count(char.draw_points) do
