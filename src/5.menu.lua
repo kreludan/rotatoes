@@ -5,10 +5,14 @@ function generate_main_menu(option_selected)
   palt(0, false) -- black color as transparency is false
 
   _draw_ui_elements()
-  sspr(0, 37, 41, 10, 44, 30)
-  y_locations = {45, 53, 61}
-  descriptions = {"new game", "level select", "settings"}
-  x_colors = {14, 8, 2}
+  sspr(29, 115, 41, 15, 44, 30)
+  y_locations = {45}
+  descriptions = {"new game"}
+  x_colors = {14}
+
+  --y_locations = {45, 53, 61}
+  --descriptions = {"new game", "level select", "settings"}
+  --x_colors = {14, 8, 2}
   for i=1,count(descriptions) do
     print("[", 36, y_locations[i], 0)
     print("]", 42, y_locations[i], 0)
@@ -24,11 +28,11 @@ function init_main_menu()
 end
 
 function handle_menu_input()
-  if btnp(⬆️) then
+  --[[if btnp(⬆️) then
     main_menu_option = max(1, main_menu_option-1)
   elseif btnp(⬇️) then
     main_menu_option = min(3, main_menu_option+1)
-  elseif btnp(❎) or btnp(🅾️) then
+  else--]]if btnp(❎) or btnp(🅾️) then
     if main_menu_option == 1 then
       _init_level(level_num)
     else

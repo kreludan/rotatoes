@@ -32,59 +32,28 @@ function build_blueprint_string(blueprint)
     return blueprint_string
 end
 
-level = {level_num = 7,
+level = {level_num = 8,
          character_blueprint = {
-             {"goal", 63, 60, "right", 0},
-             {"enemy_basic", 47, 60, "right", 1},
-             {"enemy_basic", 79, 60, "left", 1},
-             {"enemy_basic", 63, 42, "down", 1},
-             {"enemy_basic", 63, 76, "up", 1},
-             {"player", 32, 27, "right", 1},
+             {"goal", 33, 31, "right", 0},
+             {"enemy_basic", 42, 31, "right", 1},
+             {"enemy_basic", 73, 88, "up", 1},
+             {"player", 73, 79, "up", 1},
          },
          rotator_blueprint = {
-             { "vert", 32, 60 },
-             { "horiz", 63, 27},
-             { "vert", 94, 60},
-             { "horiz", 63, 91}
+             { "horiz", 73, 31 }
          },
          static_tile_blueprint = {
-             {"corr_singleton", 63, 60},
-             {"corrend_left", 47, 60},
-             {"corrend_right", 54, 60},
-             {"corrend_left", 72, 60},
-             {"corrend_right", 79, 60},
-             {"corrend_up", 63, 42},
-             {"corrend_down", 63, 51},
-             {"corrend_up", 63, 69},
-             {"corrend_down", 63, 76},
+             {"corr_singleton", 33, 31},
+             {"corrend_left", 42,31},
+             {"corr_horiz", 50, 31},
+             {"corrend_right", 58, 31},
 
-             {"corrend_up", 32, 75},
-             {"corr_vert", 32, 84},
-             {"corr_turn_downleft", 32, 91},
-
-             {"corr_horiz", 40, 91},
-             {"corrend_right", 48, 91},
-
-             {"corrend_left", 78, 91},
-             {"corr_horiz", 86, 91},
-             {"corr_turn_downright", 94, 91},
-
-             {"corr_vert", 94, 83},
-             {"corrend_up", 94, 75},
-
-             {"corrend_down", 32, 45},
-             {"corr_vert", 32,36},
-             {"corr_turn_upleft", 32,27},
-
-             {"corr_horiz", 40, 27},
-             {"corrend_right", 48, 27},
-
-             {"corrend_left", 78, 27},
-             {"corr_horiz", 86, 27},
-             {"corr_turn_upright", 94, 27},
-
-             {"corr_vert", 94, 36},
-             {"corrend_down", 94, 45}
+             {"corrend_up", 73, 46},
+             {"corr_vert", 73, 55},
+             {"corr_vert", 73, 64},
+             {"corr_vert", 73, 73},
+             {"corr_vert", 73, 79},
+             {"corrend_down", 73, 88}
          }}
 
 level1 = {level_num = 1,
@@ -232,6 +201,61 @@ level6 = {level_num = 6,
               {"corr_singleton", 89, 95}
           }}
 
+level7 = {level_num = 7,
+          character_blueprint = {
+              {"goal", 63, 60, "right", 0},
+              {"enemy_basic", 47, 60, "right", 1},
+              {"enemy_basic", 79, 60, "left", 1},
+              {"enemy_basic", 63, 42, "down", 1},
+              {"enemy_basic", 63, 76, "up", 1},
+              {"player", 32, 27, "right", 1},
+          },
+          rotator_blueprint = {
+              { "vert", 32, 60 },
+              { "horiz", 63, 27},
+              { "vert", 94, 60},
+              { "horiz", 63, 91}
+          },
+          static_tile_blueprint = {
+              {"corr_singleton", 63, 60},
+              {"corrend_left", 47, 60},
+              {"corrend_right", 54, 60},
+              {"corrend_left", 72, 60},
+              {"corrend_right", 79, 60},
+              {"corrend_up", 63, 42},
+              {"corrend_down", 63, 51},
+              {"corrend_up", 63, 69},
+              {"corrend_down", 63, 76},
+
+              {"corrend_up", 32, 75},
+              {"corr_vert", 32, 84},
+              {"corr_turn_downleft", 32, 91},
+
+              {"corr_horiz", 40, 91},
+              {"corrend_right", 48, 91},
+
+              {"corrend_left", 78, 91},
+              {"corr_horiz", 86, 91},
+              {"corr_turn_downright", 94, 91},
+
+              {"corr_vert", 94, 83},
+              {"corrend_up", 94, 75},
+
+              {"corrend_down", 32, 45},
+              {"corr_vert", 32,36},
+              {"corr_turn_upleft", 32,27},
+
+              {"corr_horiz", 40, 27},
+              {"corrend_right", 48, 27},
+
+              {"corrend_left", 78, 27},
+              {"corr_horiz", 86, 27},
+              {"corr_turn_upright", 94, 27},
+
+              {"corr_vert", 94, 36},
+              {"corrend_down", 94, 45}
+          }}
+
 unused_level_1 = {level_num = 999,
                   character_blueprint = {
                       {"goal", 96, 30, "right", 0},
@@ -261,6 +285,6 @@ unused_level_1 = {level_num = 999,
                       {"corr_singleton", 96, 30}
                   }}
 
-levels = {level1, level2, level3, level4, level5, level6}
+levels = {level1, level2, level3, level4, level5, level6, level7}
 
 print(encode_level_as_string(level))
