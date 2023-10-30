@@ -7,7 +7,7 @@ function _init()
   in_game_menu_option = -1
   main_menu_option = 1
   level_select_option = 1
-  global_game_speed = 1
+  global_game_speed = 0.75
   level_num = 1 -- current level
   furthest_level_unlocked = get_furthest_level()
 end
@@ -91,7 +91,9 @@ end
 
 function _init_character_details()
   for i=1,count(characters_to_draw) do
-    characters_to_draw[i].waypoint_from = get_starting_waypoint(characters_to_draw[i], waypoints)
+    starting_waypoint = get_starting_waypoint(characters_to_draw[i], waypoints)
+    characters_to_draw[i].waypoint_from = starting_waypoint
+    characters_to_draw[i].waypoint_to = starting_waypoint
     if characters_to_draw[i].char_type == "player" then
       level_player = characters_to_draw[i]
     elseif characters_to_draw[i].char_type == "goal" then
@@ -147,36 +149,15 @@ function _update()
   if level_state == "playing" then
     _handlerots()
     _handlerotends()
-    _handlecharmovement()
-    _handlecharcollisions()
+    _handleallcharmovement()
   end
 end
 
-function _handlecharcollisions()
-  for i=1, count(level_player.draw_points) do
-    if level_player.draw_points[i].x == level_goal.center_x and
-    level_player.draw_points[i].y == level_goal.center_y then
-      in_game_menu_option = 1
-      level_state = "win"
-    end
-
-    for j=1, count(level_enemies) do
-      if level_player.draw_points[i].x == level_enemies[j].center_x and
-      level_player.draw_points[i].y == level_enemies[j].center_y then
-        in_game_menu_option = 1
-        level_state = "lose"
-      end
-    end
-  end
-end
-
-
-function _handlecharmovement()
+function _handleallcharmovement()
   for i = 1, count(characters_to_draw) do
     if characters_to_draw[i].rotating == false then
-      get_next_waypoint(characters_to_draw[i], waypoints, max_distance)
-      characters_to_draw[i].tile_on = get_tile_on(characters_to_draw[i])
-      characters_to_draw[i] = move_character(characters_to_draw[i])
+      movement_speed = characters_to_draw[i].char_speed * global_game_speed
+      handle_char_movement(characters_to_draw[i], movement_speed)
     end
   end
 end

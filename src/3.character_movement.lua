@@ -7,6 +7,30 @@ function get_starting_waypoint(char, waypoints)
   return nil
 end
 
+function handle_char_movement(char, movement_distance)
+  -- end recursion if we have no more to go or if something ended the level
+  if movement_distance <= 0 or level_state != "playing" then
+    char.tile_on = get_tile_on(char)
+    return char
+  end
+
+  get_next_waypoint(char, waypoints, max_distance)
+  local distance_to_waypoint = abs(char.center_x - char.waypoint_to.draw_waypoint.x) + abs(char.center_y - char.waypoint_to.draw_waypoint.y)
+  local movement_toward_waypoint = min(movement_distance, distance_to_waypoint)
+  local leftover_movement = movement_distance - movement_toward_waypoint
+
+  -- we might not find any waypoints to go to in which case just don't move
+  if distance_to_waypoint == 0 then 
+    return handle_char_movement(char, 0)
+  end
+
+  if char == level_player then
+    handle_char_collisions(movement_toward_waypoint)
+  end
+  move_character(char, movement_toward_waypoint)
+  return handle_char_movement(char, leftover_movement)
+end
+
 function get_tile_on(char)
   waypoint_to = char.waypoint_to
   waypoint_from = char.waypoint_from
@@ -100,16 +124,20 @@ function search_for_waypoint_in_direction(char, waypoints_horiz, waypoints_vert,
   else
     prospective_waypoints = waypoints_vert
   end
-  for i=1,max_distance do
-    prospective_x = prospective_x + x_dir
-    prospective_y = prospective_y + y_dir
-    for j=1,count(prospective_waypoints) do
-      if prospective_waypoints[j].draw_waypoint.x == prospective_x and
-              prospective_waypoints[j].draw_waypoint.y == prospective_y then
-        return prospective_waypoints[j]
-      end
+  for i=1,count(prospective_waypoints) do
+    if is_point_in_direction(char.center_x, char.center_y,
+            prospective_waypoints[i].draw_waypoint.x, prospective_waypoints[i].draw_waypoint.y,
+            x_dir * max_distance, y_dir * max_distance) then
+      return prospective_waypoints[i]
     end
   end
+end
+
+function is_point_in_direction(start_x, start_y, point_x, point_y, x_search, y_search)
+  local end_x = start_x + x_search
+  local end_y = start_y + y_search
+  return mid(start_x, point_x, end_x) == point_x and
+          mid(start_y, point_y, end_y) == point_y
 end
 
 
@@ -286,21 +314,46 @@ function turn_180_degrees(char)
   end
 end
 
-function move_character(char)
-  char_speed = char.char_speed * global_game_speed
+function get_char_movement_x_y(char, dist)
   if char.movement_dir == "right" then
-    return translate_tile(char, char_speed, 0)
+    return dist, 0
   elseif char.movement_dir == "left" then
-    return translate_tile(char, char_speed * -1, 0)
+    return dist * -1, 0
   elseif char.movement_dir == "up" then
-    return translate_tile(
-      char, 0, char_speed * -1
-    )
+    return 0, dist * -1
   elseif char.movement_dir == "down" then
-    return translate_tile(
-      char, 0, char_speed
-    )
+    return 0, dist
   else
-    return char
+    return 0, 0
+  end
+end
+
+function move_character(char, dist)
+  -- char_speed = char.char_speed * global_game_speed
+  local dx, dy = get_char_movement_x_y(char, dist)
+  return translate_tile(char, dx, dy)
+end
+
+function handle_char_collisions(player_move_dist)
+  local dx, dy = get_char_movement_x_y(level_player, player_move_dist)
+  for i=1, count(level_player.draw_points) do
+    local draw_point = level_player.draw_points[i]
+
+    if is_point_in_direction(draw_point.x, draw_point.y,
+            level_goal.center_x, level_goal.center_y, dx, dy) then
+      in_game_menu_option = 1
+      level_state = "win"
+    end
+
+    for j=1, count(level_enemies) do
+      for k=1, count(level_enemies[j].draw_points) do
+        if is_point_in_direction(draw_point.x, draw_point.y,
+              level_enemies[j].draw_points[k].x, level_enemies[j].draw_points[k].y,
+              dx, dy) then
+          in_game_menu_option = 1
+          level_state = "lose"
+        end
+      end
+    end
   end
 end
