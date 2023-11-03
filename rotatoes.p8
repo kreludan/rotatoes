@@ -683,22 +683,24 @@ function get_tile_on(char)
     return waypoint_to.tile_on
   end
   -- case 2: vertical travel. x-axes of the two waypoints are the same.
-  if waypoint_to.x == waypoint_from.x then
+  if waypoint_to.draw_waypoint.x == waypoint_from.draw_waypoint.x then
     if abs(waypoint_to.draw_waypoint.y - char.center_y) <= abs(waypoint_from.draw_waypoint.y - char.center_y) then
       return waypoint_to.tile_on
     else
       return waypoint_from.tile_on
     end
     -- case 3: horizontal travel. y-axes of the two waypoints are the same.
-  elseif waypoint_to.y == waypoint_from.y then
-    if abs(waypoint_to.x - char.center_x) <= abs(waypoint_from.x - char.center_x) then
+  elseif waypoint_to.draw_waypoint.y == waypoint_from.draw_waypoint.y then
+    if abs(waypoint_to.draw_waypoint.x - char.center_x) <= abs(waypoint_from.draw_waypoint.x - char.center_x) then
       return waypoint_to.tile_on
     else
       return waypoint_from.tile_on
     end
   end
-  -- this should never happen :koyoriWao:
-  return nil
+  -- our waypoints can end up on completely different x's and y's if one of them gets rotated :YuiPanic:
+  -- in which case, we can leave char.tile_on as what it was from before the rotation; it'll get updated
+  -- when the character reaches the next waypoint and resets char.waypoint_from
+  return char.tile_on
 end
 
 function get_next_waypoint(char, waypoints, max_distance)
